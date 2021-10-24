@@ -33,3 +33,8 @@ In order to make your functions more useable for others, please consider using [
 This will show a nicely formatted description of your function when a user hovers over it:
 
 ![](https://i.imgur.com/VOPAybr.png)
+
+VS Code has an extension to automate alot of this process based on the type declarations in the function definition:
+
+![image](https://user-images.githubusercontent.com/70717676/138588097-9c4601f7-234d-409d-8cf1-d49722ebe47d.png)
+
