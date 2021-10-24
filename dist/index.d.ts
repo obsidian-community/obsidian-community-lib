@@ -1,1 +1,1 @@
-export { sayHello, sayGoodbye } from "./utils";
+export { copy, sayHello, sayGoodbye } from "./utils";
