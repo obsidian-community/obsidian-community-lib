@@ -2,8 +2,10 @@
 
 This is a community-maintaned library of commonly used functions when developing Obsidian plugins.
 
-To use the library in your plugin, install it using `npm i obsidian-community-lib`.
-Then grab functions out of the library using `import { function } from "obsidian-community-lib"`.
+To use the library in your plugin:
+
+1. Install it using `npm i obsidian-community-lib`,
+2. Then grab functions out of the library using `import { function } from "obsidian-community-lib"`.
 
 ## Contributing
 
@@ -37,4 +39,3 @@ This will show a nicely formatted description of your function when a user hover
 VS Code has an extension to automate alot of this process based on the type declarations in the function definition:
 
 ![image](https://user-images.githubusercontent.com/70717676/138588097-9c4601f7-234d-409d-8cf1-d49722ebe47d.png)
-
