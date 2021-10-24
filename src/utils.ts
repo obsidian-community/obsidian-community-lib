@@ -1,6 +1,5 @@
 import * as feather from "feather-icons";
-import { addIcon, TFile, Vault } from "obsidian";
-import { Notice } from "obsidian";
+import { addIcon, TFile, Vault, Notice } from "obsidian";
 
 /**
  * You can await this Function to delay execution
@@ -52,7 +51,7 @@ export function base64ToArrayBuffer(base64: string): ArrayBuffer {
   const binary_string = window.atob(base64);
   const len = binary_string.length;
   let bytes = new Uint8Array(len);
-  for (var i = 0; i < len; i++) {
+  for (let i = 0; i < len; i++) {
       bytes[i] = binary_string.charCodeAt(i);
   }
   return bytes.buffer;
