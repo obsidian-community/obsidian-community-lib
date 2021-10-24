@@ -29,5 +29,8 @@
     "homepage": "https://github.com/SkepticMystic/obsidian-community-lib#readme",
     "devDependencies": {
         "standard-version": "^9.3.2"
+    },
+    "dependencies": {
+        "obsidian": "^0.12.17"
     }
 }
