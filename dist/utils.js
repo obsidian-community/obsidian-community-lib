@@ -21,7 +21,7 @@ exports.wait = wait;
 function addAllFeatherIcons(attr = { viewBox: "0 0 24 24", width: "100", height: "100" }) {
     Object.values(feather.icons).forEach((i) => {
         const svg = i.toSvg(attr);
-        obsidian_1.addIcon("feather-" + i.name, svg);
+        (0, obsidian_1.addIcon)("feather-" + i.name, svg);
     });
 }
 exports.addAllFeatherIcons = addAllFeatherIcons;
@@ -33,7 +33,7 @@ exports.addAllFeatherIcons = addAllFeatherIcons;
  */
 function addFeatherIcon(name, attr = { viewBox: "0 0 24 24", width: "100", height: "100" }) {
     if (feather.icons[name]) {
-        obsidian_1.addIcon(`feather-${name}`, feather.icons[name].toSvg(attr));
+        (0, obsidian_1.addIcon)(`feather-${name}`, feather.icons[name].toSvg(attr));
     }
     else {
         throw Error(`This Icon (${name}) doesn't exist in the Feather Library.`);
@@ -167,7 +167,7 @@ async function openOrSwitch(app, dest, event, options = { createNewFile: true })
         if (!options.createNewFile)
             return;
         const newFileFolder = app.fileManager.getNewFileParent(currFile.path).path;
-        const newFilePath = obsidian_1.normalizePath(`${newFileFolder}${newFileFolder === "/" ? "" : "/"}${dest}.md`);
+        const newFilePath = (0, obsidian_1.normalizePath)(`${newFileFolder}${newFileFolder === "/" ? "" : "/"}${dest}.md`);
         await app.vault.create(newFilePath, "");
         destFile = app.metadataCache.getFirstLinkpathDest(newFilePath, currFile.path);
     }
@@ -175,8 +175,10 @@ async function openOrSwitch(app, dest, event, options = { createNewFile: true })
     const leavesWithDestAlreadyOpen = [];
     // For all open leaves, if the leave's basename is equal to the link destination, rather activate that leaf instead of opening it in two panes
     workspace.iterateAllLeaves((leaf) => {
-        if (leaf.view?.file?.basename === dest) {
-            leavesWithDestAlreadyOpen.push(leaf);
+        if (leaf.view instanceof obsidian_1.MarkdownView) {
+            if (leaf.view?.file?.basename === dest) {
+                leavesWithDestAlreadyOpen.push(leaf);
+            }
         }
     });
     // Rather switch to it if it is open

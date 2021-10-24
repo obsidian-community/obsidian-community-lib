@@ -21,7 +21,7 @@ declare module "obsidian" {
             };
         };
     }
-    interface View {
+    interface MarkdownView {
         file: TFile;
     }
 }
