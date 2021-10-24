@@ -2,6 +2,18 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.0.8](https://github.com/SkepticMystic/obsidian-community-lib/compare/0.0.7...0.0.8) (2021-10-24)
+
+
+### Features
+
+* :rocket: Add my often used Methods ([4956509](https://github.com/SkepticMystic/obsidian-community-lib/commit/4956509fb5f4a3fb62544b2977f1de9bc3bf543d))
+
+
+### Bug Fixes
+
+* add yarn.lock to gitignore ([9e1d37d](https://github.com/SkepticMystic/obsidian-community-lib/commit/9e1d37d3d3f19375e0c4fb4259a719472c934d01))
+
 ### [0.0.7](https://github.com/SkepticMystic/obsidian-community-lib/compare/0.0.6...0.0.7) (2021-10-24)
 
 ### [0.0.6](https://github.com/SkepticMystic/obsidian-community-lib/compare/0.0.5...0.0.6) (2021-10-24)
