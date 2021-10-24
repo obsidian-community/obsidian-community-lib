@@ -1,1 +1,8 @@
-export { addAllFeatherIcons, addFeatherIcon, base64ToArrayBuffer, getAvailablePathForAttachments, wait } from "./utils";
+export {
+    addAllFeatherIcons,
+    addFeatherIcon,
+    base64ToArrayBuffer,
+    getAvailablePathForAttachments,
+    wait,
+    copy,
+} from "./utils";

@@ -1,5 +1,6 @@
 import * as feather from "feather-icons";
 import { addIcon, TFile, Vault } from "obsidian";
+import { Notice } from "obsidian";
 
 /**
  * You can await this Function to delay execution
@@ -9,6 +10,7 @@ import { addIcon, TFile, Vault } from "obsidian";
 export async function wait(delay: number): Promise<void> {
   return new Promise(resolve => setTimeout(resolve, delay));
 }
+
 /**
  * Adds all official Feather Icons to Obsidian.
  * https://feathericons.com/
@@ -68,4 +70,16 @@ export function base64ToArrayBuffer(base64: string): ArrayBuffer {
 export function getAvailablePathForAttachments(vault: Vault, fileName: string, format: string, sourceFile: TFile): string {
   //@ts-expect-error
   return vault.getAvailablePathForAttachments(fileName, format, sourceFile);
+}
+
+/**
+ * Copy Text to the Users Clipboard.
+ * 
+ * @param content The contend to be copied to clipboard.
+ */
+export async function copy(content: string) {
+  await navigator.clipboard.writeText(content).then(
+    () => new Notice("Copied to clipboard"),
+    () => new Notice("Could not copy to clipboard")
+  );
 }
