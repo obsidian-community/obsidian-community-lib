@@ -2,6 +2,14 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.0.12](https://github.com/SkepticMystic/obsidian-community-lib/compare/0.0.11...0.0.12) (2021-10-24)
+
+
+### Features
+
+* :sparkles: Add my functions ([14ab90e](https://github.com/SkepticMystic/obsidian-community-lib/commit/14ab90e56ba0a4eb2559d92be0d37762362543b2))
+* :sparkles: Attempt to extend obsidian module ([e8e3d58](https://github.com/SkepticMystic/obsidian-community-lib/commit/e8e3d587db20287c69746cc56e35db7faaa211d4))
+
 ### [0.0.11](https://github.com/SkepticMystic/obsidian-community-lib/compare/0.0.10...0.0.11) (2021-10-24)
 
 ### [0.0.10](https://github.com/SkepticMystic/obsidian-community-lib/compare/0.0.9...0.0.10) (2021-10-24)
