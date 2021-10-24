@@ -30,10 +30,6 @@ declare module "obsidian" {
       };
     };
   }
-
-  interface MarkdownView {
-    file: TFile;
-  }
 }
 
 /**
