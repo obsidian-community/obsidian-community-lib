@@ -9,6 +9,7 @@ import {
   View,
   normalizePath,
   WorkspaceLeaf,
+  MarkdownView,
 } from "obsidian";
 
 declare module "obsidian" {
@@ -30,7 +31,7 @@ declare module "obsidian" {
     };
   }
 
-  interface View {
+  interface MarkdownView {
     file: TFile;
   }
 }
@@ -240,8 +241,10 @@ export async function openOrSwitch(
   const leavesWithDestAlreadyOpen: WorkspaceLeaf[] = [];
   // For all open leaves, if the leave's basename is equal to the link destination, rather activate that leaf instead of opening it in two panes
   workspace.iterateAllLeaves((leaf) => {
-    if (leaf.view?.file?.basename === dest) {
-      leavesWithDestAlreadyOpen.push(leaf);
+    if (leaf.view instanceof MarkdownView) {
+      if (leaf.view?.file?.basename === dest) {
+        leavesWithDestAlreadyOpen.push(leaf);
+      }
     }
   });
 
