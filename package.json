@@ -9,6 +9,7 @@
     ],
     "scripts": {
         "test": "echo \"Error: no test specified\" && exit 1",
+        "compile": "tsc && git commit -am \"chore: :package: Compile\"",
         "docs": "npx typedoc ./src/utils.ts && git commit -am \"docs: :memo: Update docs site\"",
         "release": "standard-version"
     },
