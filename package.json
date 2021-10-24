@@ -9,7 +9,7 @@
     ],
     "scripts": {
         "test": "echo \"Error: no test specified\" && exit 1",
-        "docs": "npx typedoc ./src/utils.ts",
+        "docs": "npx typedoc ./src/utils.ts && git commit -am \"Update docs site\"",
         "release": "standard-version"
     },
     "standard-version": {
