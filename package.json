@@ -28,6 +28,11 @@
     },
     "homepage": "https://github.com/SkepticMystic/obsidian-community-lib#readme",
     "devDependencies": {
+        "@types/feather-icons": "^4.7.0",
         "standard-version": "^9.3.2"
+    },
+    "dependencies": {
+        "feather-icons": "^4.28.0",
+        "obsidian": "^0.12.17"
     }
 }
