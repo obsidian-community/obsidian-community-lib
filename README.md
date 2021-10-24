@@ -1,3 +1,5 @@
+![npm](https://img.shields.io/npm/v/obsidian-community-lib?color=purple)
+
 # Obsidian Community Lib
 
 This is a community-maintaned library of commonly used functions when developing Obsidian plugins.
