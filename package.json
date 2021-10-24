@@ -9,7 +9,7 @@
     ],
     "scripts": {
         "test": "echo \"Error: no test specified\" && exit 1",
-        "release": "standard-version"
+        "release": "standard-version && npx typedoc ./src/utils.ts"
     },
     "standard-version": {
         "t": ""
@@ -28,9 +28,13 @@
     },
     "homepage": "https://github.com/SkepticMystic/obsidian-community-lib#readme",
     "devDependencies": {
-        "standard-version": "^9.3.2"
+        "@types/feather-icons": "^4.7.0",
+        "standard-version": "^9.3.2",
+        "typedoc": "^0.22.6",
+        "typescript": "^4.4.4"
     },
     "dependencies": {
+        "feather-icons": "^4.28.0",
         "obsidian": "^0.12.17"
     }
 }
