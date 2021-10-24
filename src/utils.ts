@@ -1,5 +1,39 @@
 import * as feather from "feather-icons";
-import { addIcon, TFile, Vault, Notice } from "obsidian";
+import {
+  addIcon,
+  TFile,
+  Vault,
+  Notice,
+  Editor,
+  App,
+  View,
+  normalizePath,
+  WorkspaceLeaf,
+} from "obsidian";
+
+declare module "obsidian" {
+  interface App {
+    plugins: {
+      plugins: { [plugin: string]: any };
+    };
+    commands: {
+      removeCommand: (id: string) => unknown;
+    };
+  }
+
+  interface Editor {
+    cm: {
+      findWordAt: (pos: EditorPosition) => EditorSelection | null;
+      state: {
+        wordAt: (offset: number) => { fromOffset: number; toOffset: number };
+      };
+    };
+  }
+
+  interface View {
+    file: TFile;
+  }
+}
 
 /**
  * You can await this Function to delay execution
