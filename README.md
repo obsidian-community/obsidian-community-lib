@@ -5,6 +5,8 @@ This is a community-maintaned library of commonly used functions when developing
 To use the library in your plugin, install it using `npm i obsidian-community-lib`.
 Then grab functions out of the library using `import { function } from "obsidian-community-lib"`.
 
+**Read more about the included methods [here](https://obsidian-community.github.io/obsidian-community-lib/modules.html).**
+
 ## Contributing
 
 > **Disclaimer**: By contributing to this repository, you grant the maintainer an irrevocable license to use the contribution under the license specified in the `LICENSE` file found in the root of this repository.
