@@ -7,6 +7,10 @@ Then grab functions out of the library using `import { function } from "obsidian
 
 ## Contributing
 
+> **Disclaimer**: By contributing to this repository, you grant the maintainer an irrevocable license to use the contribution under the license specified in the `LICENSE` file found in the root of this repository.
+> The maintainer of this project can choose to change the license, or transfer maintainer status at any time.
+> The contributor does not infringe any copyright in their contribution.
+
 This library is very much made for everyone to use and contribute to. If you would like to add a function or edit existing functions, please submit a pull request with your changes.
 
 To add new functions, go to `src/utils.ts` and add your code as an exported function.
@@ -21,3 +25,11 @@ In your commit messages, it is highly encouraged for you to use the [Conventiona
 VS Code has a conventional commits extension you can use to make this even easier!
 
 ![](https://i.imgur.com/9TXVdwA.png)
+
+### TS Doc
+
+In order to make your functions more useable for others, please consider using [TS Doc](https://tsdoc.org) to document your code in a standardised way.
+
+This will show a nicely formatted description of your function when a user hovers over it:
+
+![](https://i.imgur.com/VOPAybr.png)
