@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.0.15](https://github.com/SkepticMystic/obsidian-community-lib/compare/0.0.14...0.0.15) (2021-10-24)
+
+
+### Bug Fixes
+
+* :bug: Check if leaf.view instanceof MarkdownView to confirm view.file exists ([007e474](https://github.com/SkepticMystic/obsidian-community-lib/commit/007e474b943b1664ab523b5dc365837268168c0c))
+
 ### [0.0.14](https://github.com/SkepticMystic/obsidian-community-lib/compare/0.0.13...0.0.14) (2021-10-24)
 
 ### [0.0.13](https://github.com/SkepticMystic/obsidian-community-lib/compare/0.0.12...0.0.13) (2021-10-24)

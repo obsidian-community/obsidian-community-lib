@@ -21,9 +21,6 @@ declare module "obsidian" {
             };
         };
     }
-    interface View {
-        file: TFile;
-    }
 }
 /**
  * You can await this Function to delay execution
