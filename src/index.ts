@@ -9,5 +9,8 @@ export {
   getSelectionFromEditor,
   hoverPreview,
   isInVault,
+  createNewMDNote,
   openOrSwitch,
+  ResolvedLinks,
+  linkedQ,
 } from "./utils";

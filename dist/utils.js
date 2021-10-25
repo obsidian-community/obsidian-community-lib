@@ -1,6 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.openOrSwitch = exports.hoverPreview = exports.isInVault = exports.getSelectionFromCurrFile = exports.getSelectionFromEditor = exports.copy = exports.getAvailablePathForAttachments = exports.base64ToArrayBuffer = exports.addFeatherIcon = exports.addAllFeatherIcons = exports.wait = void 0;
+exports.linkedQ = exports.openOrSwitch = exports.createNewMDNote = exports.hoverPreview = exports.isInVault = exports.getSelectionFromCurrFile = exports.getSelectionFromEditor = exports.copy = exports.getAvailablePathForAttachments = exports.base64ToArrayBuffer = exports.addFeatherIcon = exports.addAllFeatherIcons = exports.wait = void 0;
 const feather = require("feather-icons");
 const obsidian_1 = require("obsidian");
 /**
@@ -151,6 +151,22 @@ function hoverPreview(event, view, to) {
 }
 exports.hoverPreview = hoverPreview;
 /**
+ * Create a new markdown note named `newName` in the user's preffered new-note-folder.
+ * @param  {App} app
+ * @param  {string} newName Name of new note (with or without '.md')
+ * @param  {string} [currFilePath=""] File path of the current note. Use an empty string if there is no active file.
+ * @returns {Promise<TFile>} new TFile
+ */
+async function createNewMDNote(app, newName, currFilePath = "") {
+    const newFileFolder = app.fileManager.getNewFileParent(currFilePath).path;
+    if (!newName.endsWith(".md")) {
+        newName += ".md";
+    }
+    const newFilePath = (0, obsidian_1.normalizePath)(`${newFileFolder}${newFileFolder === "/" ? "" : "/"}${newName}.md`);
+    return await app.vault.create(newFilePath, "");
+}
+exports.createNewMDNote = createNewMDNote;
+/**
  * When clicking a link, check if that note is already open in another leaf, and switch to that leaf, if so. Otherwise, open the note in a new pane
  * @param  {App} app
  * @param  {string} dest Basename of note to open to open
@@ -164,12 +180,11 @@ async function openOrSwitch(app, dest, event, options = { createNewFile: true })
     let destFile = app.metadataCache.getFirstLinkpathDest(dest, currFile.path);
     // If dest doesn't exist, make it
     if (!destFile) {
-        if (!options.createNewFile)
+        if (options.createNewFile) {
+            destFile = await createNewMDNote(app, dest, currFile.path);
+        }
+        else
             return;
-        const newFileFolder = app.fileManager.getNewFileParent(currFile.path).path;
-        const newFilePath = (0, obsidian_1.normalizePath)(`${newFileFolder}${newFileFolder === "/" ? "" : "/"}${dest}.md`);
-        await app.vault.create(newFilePath, "");
-        destFile = app.metadataCache.getFirstLinkpathDest(newFilePath, currFile.path);
     }
     // Check if it's already open
     const leavesWithDestAlreadyOpen = [];
@@ -194,3 +209,19 @@ async function openOrSwitch(app, dest, event, options = { createNewFile: true })
     }
 }
 exports.openOrSwitch = openOrSwitch;
+/**
+ * Given a list of resolved links from app.metadataCache, check if `from` has a link to `to`
+ * @param  {ResolvedLinks} resolvedLinks
+ * @param  {string} from Note name with link leaving (With or without '.md')
+ * @param  {string} to Note name with link arriving (With or without '.md')
+ */
+function linkedQ(resolvedLinks, from, to) {
+    if (!from.endsWith(".md")) {
+        from += ".md";
+    }
+    if (!to.endsWith(".md")) {
+        to += ".md";
+    }
+    return resolvedLinks[from]?.hasOwnProperty(to);
+}
+exports.linkedQ = linkedQ;

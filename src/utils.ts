@@ -22,6 +22,14 @@ declare module "obsidian" {
     };
   }
 
+  interface Vault {
+    getConfig: (setting: string) => unknown;
+  }
+
+  interface metadataCache {
+    resolvedLinks: ResolvedLinks;
+  }
+
   interface Editor {
     cm: {
       findWordAt: (pos: EditorPosition) => EditorSelection | null;
@@ -200,6 +208,28 @@ export function hoverPreview<TView extends View>(
 }
 
 /**
+ * Create a new markdown note named `newName` in the user's preffered new-note-folder.
+ * @param  {App} app
+ * @param  {string} newName Name of new note (with or without '.md')
+ * @param  {string} [currFilePath=""] File path of the current note. Use an empty string if there is no active file.
+ * @returns {Promise<TFile>} new TFile
+ */
+export async function createNewMDNote(
+  app: App,
+  newName: string,
+  currFilePath: string = ""
+): Promise<TFile> {
+  const newFileFolder = app.fileManager.getNewFileParent(currFilePath).path;
+  if (!newName.endsWith(".md")) {
+    newName += ".md";
+  }
+  const newFilePath = normalizePath(
+    `${newFileFolder}${newFileFolder === "/" ? "" : "/"}${newName}.md`
+  );
+  return await app.vault.create(newFilePath, "");
+}
+
+/**
  * When clicking a link, check if that note is already open in another leaf, and switch to that leaf, if so. Otherwise, open the note in a new pane
  * @param  {App} app
  * @param  {string} dest Basename of note to open to open
@@ -221,16 +251,9 @@ export async function openOrSwitch(
 
   // If dest doesn't exist, make it
   if (!destFile) {
-    if (!options.createNewFile) return;
-    const newFileFolder = app.fileManager.getNewFileParent(currFile.path).path;
-    const newFilePath = normalizePath(
-      `${newFileFolder}${newFileFolder === "/" ? "" : "/"}${dest}.md`
-    );
-    await app.vault.create(newFilePath, "");
-    destFile = app.metadataCache.getFirstLinkpathDest(
-      newFilePath,
-      currFile.path
-    );
+    if (options.createNewFile) {
+      destFile = await createNewMDNote(app, dest, currFile.path);
+    } else return;
   }
 
   // Check if it's already open
@@ -248,7 +271,7 @@ export async function openOrSwitch(
   if (leavesWithDestAlreadyOpen.length > 0) {
     workspace.setActiveLeaf(leavesWithDestAlreadyOpen[0]);
   } else {
-    const mode = (app.vault as any).getConfig("defaultViewMode");
+    const mode = app.vault.getConfig("defaultViewMode") as string;
     const leaf =
       event.ctrlKey || event.getModifierState("Meta")
         ? workspace.splitActiveLeaf()
@@ -256,4 +279,29 @@ export async function openOrSwitch(
 
     await leaf.openFile(destFile, { active: true, mode });
   }
+}
+
+export interface ResolvedLinks {
+  [from: string]: {
+    [to: string]: number;
+  };
+}
+/**
+ * Given a list of resolved links from app.metadataCache, check if `from` has a link to `to`
+ * @param  {ResolvedLinks} resolvedLinks
+ * @param  {string} from Note name with link leaving (With or without '.md')
+ * @param  {string} to Note name with link arriving (With or without '.md')
+ */
+export function linkedQ(
+  resolvedLinks: ResolvedLinks,
+  from: string,
+  to: string
+) {
+  if (!from.endsWith(".md")) {
+    from += ".md";
+  }
+  if (!to.endsWith(".md")) {
+    to += ".md";
+  }
+  return resolvedLinks[from]?.hasOwnProperty(to);
 }

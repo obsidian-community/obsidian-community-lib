@@ -2,6 +2,21 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.0.16](https://github.com/SkepticMystic/obsidian-community-lib/compare/0.0.15...0.0.16) (2021-10-25)
+
+
+### Features
+
+* :sparkles: createNewNote function ([745acb4](https://github.com/SkepticMystic/obsidian-community-lib/commit/745acb47a8722beae4c23fa42ef2040bb919c5bf))
+* :sparkles: Expand vault interface ([0fa320a](https://github.com/SkepticMystic/obsidian-community-lib/commit/0fa320a6ffad6a2b3224b3a9121e3030c51d1358))
+* :sparkles: linkedQ function ([7973df2](https://github.com/SkepticMystic/obsidian-community-lib/commit/7973df2c88d153b0eabc1186bac5e7e9ffe25127))
+
+
+### Bug Fixes
+
+* :bug: createwNewMDNote: Append '.md' to `newName` if not present ([e797c85](https://github.com/SkepticMystic/obsidian-community-lib/commit/e797c85f1f61079526b6d498733d3241d2e77369))
+* :bug: Remove redundant declaration ([176fa8e](https://github.com/SkepticMystic/obsidian-community-lib/commit/176fa8e6d3ec9410e374bd52bdb2227d1f0fcdb0))
+
 ### [0.0.15](https://github.com/SkepticMystic/obsidian-community-lib/compare/0.0.14...0.0.15) (2021-10-24)
 
 
