@@ -200,6 +200,25 @@ export function hoverPreview<TView extends View>(
 }
 
 /**
+ * Create a new note named `newName` in the user's preffered new-note-folder.
+ * @param  {App} app
+ * @param  {string} newName Basename of new note
+ * @param  {string} [currFilePath=""] File path of the current note. Use an empty string if there is no active file.
+ * @returns {Promise<TFile>} new TFile
+ */
+export async function createNewNote(
+  app: App,
+  newName: string,
+  currFilePath: string = ""
+): Promise<TFile> {
+  const newFileFolder = app.fileManager.getNewFileParent(currFilePath).path;
+  const newFilePath = normalizePath(
+    `${newFileFolder}${newFileFolder === "/" ? "" : "/"}${newName}.md`
+  );
+  return await app.vault.create(newFilePath, "");
+}
+
+/**
  * When clicking a link, check if that note is already open in another leaf, and switch to that leaf, if so. Otherwise, open the note in a new pane
  * @param  {App} app
  * @param  {string} dest Basename of note to open to open
@@ -221,16 +240,9 @@ export async function openOrSwitch(
 
   // If dest doesn't exist, make it
   if (!destFile) {
-    if (!options.createNewFile) return;
-    const newFileFolder = app.fileManager.getNewFileParent(currFile.path).path;
-    const newFilePath = normalizePath(
-      `${newFileFolder}${newFileFolder === "/" ? "" : "/"}${dest}.md`
-    );
-    await app.vault.create(newFilePath, "");
-    destFile = app.metadataCache.getFirstLinkpathDest(
-      newFilePath,
-      currFile.path
-    );
+    if (options.createNewFile) {
+      destFile = await createNewNote(app, dest, currFile.path);
+    } else return;
   }
 
   // Check if it's already open
