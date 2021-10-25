@@ -22,6 +22,10 @@ declare module "obsidian" {
     };
   }
 
+  interface Vault {
+    getConfig: (setting: string) => unknown;
+  }
+
   interface Editor {
     cm: {
       findWordAt: (pos: EditorPosition) => EditorSelection | null;
@@ -260,7 +264,7 @@ export async function openOrSwitch(
   if (leavesWithDestAlreadyOpen.length > 0) {
     workspace.setActiveLeaf(leavesWithDestAlreadyOpen[0]);
   } else {
-    const mode = (app.vault as any).getConfig("defaultViewMode");
+    const mode = app.vault.getConfig("defaultViewMode") as string;
     const leaf =
       event.ctrlKey || event.getModifierState("Meta")
         ? workspace.splitActiveLeaf()
