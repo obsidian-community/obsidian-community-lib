@@ -10,6 +10,12 @@ declare module "obsidian" {
             removeCommand: (id: string) => unknown;
         };
     }
+    interface Vault {
+        getConfig: (setting: string) => unknown;
+    }
+    interface metadataCache {
+        resolvedLinks: ResolvedLinks;
+    }
     interface Editor {
         cm: {
             findWordAt: (pos: EditorPosition) => EditorSelection | null;
@@ -103,6 +109,14 @@ export declare const isInVault: (app: App, noteName: string, sourcePath?: string
  */
 export declare function hoverPreview<TView extends View>(event: MouseEvent, view: TView, to: string): void;
 /**
+ * Create a new markdown note named `newName` in the user's preffered new-note-folder.
+ * @param  {App} app
+ * @param  {string} newName Name of new note (with or without '.md')
+ * @param  {string} [currFilePath=""] File path of the current note. Use an empty string if there is no active file.
+ * @returns {Promise<TFile>} new TFile
+ */
+export declare function createNewMDNote(app: App, newName: string, currFilePath?: string): Promise<TFile>;
+/**
  * When clicking a link, check if that note is already open in another leaf, and switch to that leaf, if so. Otherwise, open the note in a new pane
  * @param  {App} app
  * @param  {string} dest Basename of note to open to open
@@ -113,3 +127,15 @@ export declare function hoverPreview<TView extends View>(event: MouseEvent, view
 export declare function openOrSwitch(app: App, dest: string, event: MouseEvent, options?: {
     createNewFile: boolean;
 }): Promise<void>;
+export interface ResolvedLinks {
+    [from: string]: {
+        [to: string]: number;
+    };
+}
+/**
+ * Given a list of resolved links from app.metadataCache, check if `from` has a link to `to`
+ * @param  {ResolvedLinks} resolvedLinks
+ * @param  {string} from Note name with link leaving (With or without '.md')
+ * @param  {string} to Note name with link arriving (With or without '.md')
+ */
+export declare function linkedQ(resolvedLinks: ResolvedLinks, from: string, to: string): boolean;
