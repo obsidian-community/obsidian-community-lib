@@ -26,6 +26,10 @@ declare module "obsidian" {
     getConfig: (setting: string) => unknown;
   }
 
+  interface metadataCache {
+    resolvedLinks: ResolvedLinks;
+  }
+
   interface Editor {
     cm: {
       findWordAt: (pos: EditorPosition) => EditorSelection | null;
@@ -272,4 +276,29 @@ export async function openOrSwitch(
 
     await leaf.openFile(destFile, { active: true, mode });
   }
+}
+
+export interface ResolvedLinks {
+  [from: string]: {
+    [to: string]: number;
+  };
+}
+/**
+ * Given a list of resolved links from app.metadataCache, check if `from` has a link to `to`
+ * @param  {ResolvedLinks} resolvedLinks
+ * @param  {string} from Note name with link leaving (With or without '.md')
+ * @param  {string} to Note name with link arriving (With or without '.md')
+ */
+export function linkedQ(
+  resolvedLinks: ResolvedLinks,
+  from: string,
+  to: string
+) {
+  if (!from.endsWith(".md")) {
+    from += ".md";
+  }
+  if (!to.endsWith(".md")) {
+    to += ".md";
+  }
+  return resolvedLinks[from]?.hasOwnProperty(to);
 }
