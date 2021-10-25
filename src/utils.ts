@@ -208,18 +208,21 @@ export function hoverPreview<TView extends View>(
 }
 
 /**
- * Create a new note named `newName` in the user's preffered new-note-folder.
+ * Create a new markdown note named `newName` in the user's preffered new-note-folder.
  * @param  {App} app
- * @param  {string} newName Basename of new note
+ * @param  {string} newName Name of new note (with or without '.md')
  * @param  {string} [currFilePath=""] File path of the current note. Use an empty string if there is no active file.
  * @returns {Promise<TFile>} new TFile
  */
-export async function createNewNote(
+export async function createNewMDNote(
   app: App,
   newName: string,
   currFilePath: string = ""
 ): Promise<TFile> {
   const newFileFolder = app.fileManager.getNewFileParent(currFilePath).path;
+  if (!newName.endsWith(".md")) {
+    newName += ".md";
+  }
   const newFilePath = normalizePath(
     `${newFileFolder}${newFileFolder === "/" ? "" : "/"}${newName}.md`
   );
@@ -249,7 +252,7 @@ export async function openOrSwitch(
   // If dest doesn't exist, make it
   if (!destFile) {
     if (options.createNewFile) {
-      destFile = await createNewNote(app, dest, currFile.path);
+      destFile = await createNewMDNote(app, dest, currFile.path);
     } else return;
   }
 
