@@ -264,11 +264,13 @@ export interface ResolvedLinks {
  * @param  {ResolvedLinks} resolvedLinks
  * @param  {string} from Note name with link leaving (With or without '.md')
  * @param  {string} to Note name with link arriving (With or without '.md')
+ * @param {boolean} [directed=true] Only check if `from` has a link to `to`. If not directed, check in both directions
  */
 export function linkedQ(
   resolvedLinks: ResolvedLinks,
   from: string,
-  to: string
+  to: string,
+  directed: boolean = true
 ) {
   if (!from.endsWith(".md")) {
     from += ".md";
@@ -276,7 +278,11 @@ export function linkedQ(
   if (!to.endsWith(".md")) {
     to += ".md";
   }
-  return resolvedLinks[from]?.hasOwnProperty(to);
+  const fromTo = resolvedLinks[from]?.hasOwnProperty(to);
+  if (!fromTo && !directed) {
+    const toFrom = resolvedLinks[to]?.hasOwnProperty(from);
+    return toFrom;
+  } else return fromTo;
 }
 
 // /**
