@@ -1,44 +1,16 @@
 import * as feather from "feather-icons";
 import {
   addIcon,
+  App,
+  Editor,
+  MarkdownView,
+  normalizePath,
+  Notice,
   TFile,
   Vault,
-  Notice,
-  Editor,
-  App,
   View,
-  normalizePath,
   WorkspaceLeaf,
-  MarkdownView,
 } from "obsidian";
-
-declare module "obsidian" {
-  interface App {
-    plugins: {
-      plugins: { [plugin: string]: any };
-    };
-    commands: {
-      removeCommand: (id: string) => unknown;
-    };
-  }
-
-  interface Vault {
-    getConfig: (setting: string) => unknown;
-  }
-
-  interface metadataCache {
-    resolvedLinks: ResolvedLinks;
-  }
-
-  interface Editor {
-    cm: {
-      findWordAt: (pos: EditorPosition) => EditorSelection | null;
-      state: {
-        wordAt: (offset: number) => { fromOffset: number; toOffset: number };
-      };
-    };
-  }
-}
 
 /**
  * You can await this Function to delay execution
@@ -271,6 +243,7 @@ export async function openOrSwitch(
   if (leavesWithDestAlreadyOpen.length > 0) {
     workspace.setActiveLeaf(leavesWithDestAlreadyOpen[0]);
   } else {
+    // @ts-ignore
     const mode = app.vault.getConfig("defaultViewMode") as string;
     const leaf =
       event.ctrlKey || event.getModifierState("Meta")
@@ -305,3 +278,27 @@ export function linkedQ(
   }
   return resolvedLinks[from]?.hasOwnProperty(to);
 }
+
+// /**
+//  * Initialise
+//  * @param  {string} viewType
+//  * @param  {Constructor<YourView>} viewClass
+//  * @returns {Promise}
+//  */
+// export async function initView<YourView extends ItemView>(
+//   viewType: string,
+//   viewClass: Constructor<YourView>
+// ): Promise<void> {
+//   let leaf: WorkspaceLeaf = null;
+//   for (leaf of this.app.workspace.getLeavesOfType(viewType)) {
+//     if (leaf.view instanceof viewClass) {
+//       return;
+//     }
+//     await leaf.setViewState({ type: "empty" });
+//     break;
+//   }
+//   (leaf ?? this.app.workspace.getRightLeaf(false)).setViewState({
+//     type: viewType,
+//     active: true,
+//   });
+// }
