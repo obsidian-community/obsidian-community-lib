@@ -2,6 +2,18 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.0.17](https://github.com/SkepticMystic/obsidian-community-lib/compare/0.0.16...0.0.17) (2021-10-26)
+
+
+### Features
+
+* :sparkles: Add directed option to linkedQ ([ab10d2d](https://github.com/SkepticMystic/obsidian-community-lib/commit/ab10d2dc2b351ed2c89c0492b45991f5cf1ec3ea))
+
+
+### Bug Fixes
+
+* :bug: Remove module override ([c8a781e](https://github.com/SkepticMystic/obsidian-community-lib/commit/c8a781ed9e29121596a841d45a3870976540972d))
+
 ### [0.0.16](https://github.com/SkepticMystic/obsidian-community-lib/compare/0.0.15...0.0.16) (2021-10-25)
 
 

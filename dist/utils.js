@@ -201,6 +201,7 @@ async function openOrSwitch(app, dest, event, options = { createNewFile: true })
         workspace.setActiveLeaf(leavesWithDestAlreadyOpen[0]);
     }
     else {
+        // @ts-ignore
         const mode = app.vault.getConfig("defaultViewMode");
         const leaf = event.ctrlKey || event.getModifierState("Meta")
             ? workspace.splitActiveLeaf()
@@ -214,14 +215,44 @@ exports.openOrSwitch = openOrSwitch;
  * @param  {ResolvedLinks} resolvedLinks
  * @param  {string} from Note name with link leaving (With or without '.md')
  * @param  {string} to Note name with link arriving (With or without '.md')
+ * @param {boolean} [directed=true] Only check if `from` has a link to `to`. If not directed, check in both directions
  */
-function linkedQ(resolvedLinks, from, to) {
+function linkedQ(resolvedLinks, from, to, directed = true) {
     if (!from.endsWith(".md")) {
         from += ".md";
     }
     if (!to.endsWith(".md")) {
         to += ".md";
     }
-    return resolvedLinks[from]?.hasOwnProperty(to);
+    const fromTo = resolvedLinks[from]?.hasOwnProperty(to);
+    if (!fromTo && !directed) {
+        const toFrom = resolvedLinks[to]?.hasOwnProperty(from);
+        return toFrom;
+    }
+    else
+        return fromTo;
 }
 exports.linkedQ = linkedQ;
+// /**
+//  * Initialise
+//  * @param  {string} viewType
+//  * @param  {Constructor<YourView>} viewClass
+//  * @returns {Promise}
+//  */
+// export async function initView<YourView extends ItemView>(
+//   viewType: string,
+//   viewClass: Constructor<YourView>
+// ): Promise<void> {
+//   let leaf: WorkspaceLeaf = null;
+//   for (leaf of this.app.workspace.getLeavesOfType(viewType)) {
+//     if (leaf.view instanceof viewClass) {
+//       return;
+//     }
+//     await leaf.setViewState({ type: "empty" });
+//     break;
+//   }
+//   (leaf ?? this.app.workspace.getRightLeaf(false)).setViewState({
+//     type: viewType,
+//     active: true,
+//   });
+// }

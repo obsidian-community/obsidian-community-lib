@@ -1,33 +1,4 @@
-import { TFile, Vault, Editor, App, View } from "obsidian";
-declare module "obsidian" {
-    interface App {
-        plugins: {
-            plugins: {
-                [plugin: string]: any;
-            };
-        };
-        commands: {
-            removeCommand: (id: string) => unknown;
-        };
-    }
-    interface Vault {
-        getConfig: (setting: string) => unknown;
-    }
-    interface metadataCache {
-        resolvedLinks: ResolvedLinks;
-    }
-    interface Editor {
-        cm: {
-            findWordAt: (pos: EditorPosition) => EditorSelection | null;
-            state: {
-                wordAt: (offset: number) => {
-                    fromOffset: number;
-                    toOffset: number;
-                };
-            };
-        };
-    }
-}
+import { App, Editor, TFile, Vault, View } from "obsidian";
 /**
  * You can await this Function to delay execution
  *
@@ -137,5 +108,6 @@ export interface ResolvedLinks {
  * @param  {ResolvedLinks} resolvedLinks
  * @param  {string} from Note name with link leaving (With or without '.md')
  * @param  {string} to Note name with link arriving (With or without '.md')
+ * @param {boolean} [directed=true] Only check if `from` has a link to `to`. If not directed, check in both directions
  */
-export declare function linkedQ(resolvedLinks: ResolvedLinks, from: string, to: string): boolean;
+export declare function linkedQ(resolvedLinks: ResolvedLinks, from: string, to: string, directed?: boolean): boolean;

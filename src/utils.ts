@@ -1,44 +1,16 @@
 import * as feather from "feather-icons";
 import {
   addIcon,
+  App,
+  Editor,
+  MarkdownView,
+  normalizePath,
+  Notice,
   TFile,
   Vault,
-  Notice,
-  Editor,
-  App,
   View,
-  normalizePath,
   WorkspaceLeaf,
-  MarkdownView,
 } from "obsidian";
-
-declare module "obsidian" {
-  interface App {
-    plugins: {
-      plugins: { [plugin: string]: any };
-    };
-    commands: {
-      removeCommand: (id: string) => unknown;
-    };
-  }
-
-  interface Vault {
-    getConfig: (setting: string) => unknown;
-  }
-
-  interface metadataCache {
-    resolvedLinks: ResolvedLinks;
-  }
-
-  interface Editor {
-    cm: {
-      findWordAt: (pos: EditorPosition) => EditorSelection | null;
-      state: {
-        wordAt: (offset: number) => { fromOffset: number; toOffset: number };
-      };
-    };
-  }
-}
 
 /**
  * You can await this Function to delay execution
@@ -271,6 +243,7 @@ export async function openOrSwitch(
   if (leavesWithDestAlreadyOpen.length > 0) {
     workspace.setActiveLeaf(leavesWithDestAlreadyOpen[0]);
   } else {
+    // @ts-ignore
     const mode = app.vault.getConfig("defaultViewMode") as string;
     const leaf =
       event.ctrlKey || event.getModifierState("Meta")
@@ -291,11 +264,13 @@ export interface ResolvedLinks {
  * @param  {ResolvedLinks} resolvedLinks
  * @param  {string} from Note name with link leaving (With or without '.md')
  * @param  {string} to Note name with link arriving (With or without '.md')
+ * @param {boolean} [directed=true] Only check if `from` has a link to `to`. If not directed, check in both directions
  */
 export function linkedQ(
   resolvedLinks: ResolvedLinks,
   from: string,
-  to: string
+  to: string,
+  directed: boolean = true
 ) {
   if (!from.endsWith(".md")) {
     from += ".md";
@@ -303,5 +278,33 @@ export function linkedQ(
   if (!to.endsWith(".md")) {
     to += ".md";
   }
-  return resolvedLinks[from]?.hasOwnProperty(to);
+  const fromTo = resolvedLinks[from]?.hasOwnProperty(to);
+  if (!fromTo && !directed) {
+    const toFrom = resolvedLinks[to]?.hasOwnProperty(from);
+    return toFrom;
+  } else return fromTo;
 }
+
+// /**
+//  * Initialise
+//  * @param  {string} viewType
+//  * @param  {Constructor<YourView>} viewClass
+//  * @returns {Promise}
+//  */
+// export async function initView<YourView extends ItemView>(
+//   viewType: string,
+//   viewClass: Constructor<YourView>
+// ): Promise<void> {
+//   let leaf: WorkspaceLeaf = null;
+//   for (leaf of this.app.workspace.getLeavesOfType(viewType)) {
+//     if (leaf.view instanceof viewClass) {
+//       return;
+//     }
+//     await leaf.setViewState({ type: "empty" });
+//     break;
+//   }
+//   (leaf ?? this.app.workspace.getRightLeaf(false)).setViewState({
+//     type: viewType,
+//     active: true,
+//   });
+// }
