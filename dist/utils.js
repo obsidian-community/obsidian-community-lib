@@ -1,6 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.linkedQ = exports.openOrSwitch = exports.createNewMDNote = exports.hoverPreview = exports.isInVault = exports.getSelectionFromCurrFile = exports.getSelectionFromEditor = exports.copy = exports.getAvailablePathForAttachments = exports.base64ToArrayBuffer = exports.addFeatherIcon = exports.addAllFeatherIcons = exports.wait = void 0;
+exports.addChangelogButton = exports.ChangelogModal = exports.linkedQ = exports.openOrSwitch = exports.createNewMDNote = exports.hoverPreview = exports.isInVault = exports.getSelectionFromCurrFile = exports.getSelectionFromEditor = exports.copy = exports.getAvailablePathForAttachments = exports.base64ToArrayBuffer = exports.addFeatherIcon = exports.addAllFeatherIcons = exports.wait = void 0;
 const feather = require("feather-icons");
 const obsidian_1 = require("obsidian");
 /**
@@ -21,7 +21,7 @@ exports.wait = wait;
 function addAllFeatherIcons(attr = { viewBox: "0 0 24 24", width: "100", height: "100" }) {
     Object.values(feather.icons).forEach((i) => {
         const svg = i.toSvg(attr);
-        (0, obsidian_1.addIcon)("feather-" + i.name, svg);
+        (0, obsidian_1.addIcon)(`feather-${i.name}`, svg);
     });
 }
 exports.addAllFeatherIcons = addAllFeatherIcons;
@@ -30,10 +30,13 @@ exports.addAllFeatherIcons = addAllFeatherIcons;
  *
  * @param name official Name of the Icon (https://feathericons.com/)
  * @param attr SVG Attributes for the Icon. The default should work for most usecases.
+ * @returns {string} Icon name
  */
 function addFeatherIcon(name, attr = { viewBox: "0 0 24 24", width: "100", height: "100" }) {
     if (feather.icons[name]) {
-        (0, obsidian_1.addIcon)(`feather-${name}`, feather.icons[name].toSvg(attr));
+        const iconName = `feather-${name}`;
+        (0, obsidian_1.addIcon)(iconName, feather.icons[name].toSvg(attr));
+        return iconName;
     }
     else {
         throw Error(`This Icon (${name}) doesn't exist in the Feather Library.`);
@@ -256,3 +259,40 @@ exports.linkedQ = linkedQ;
 //     active: true,
 //   });
 // }
+/**
+ * A Modal used in {@link addChangelogButton} to display a changlog fetched from a provided url.
+ * @param  {App} app
+ * @param  {YourPlugin} plugin
+ * @param  {string} url Where to find the raw markdown content of your changelog file
+ */
+class ChangelogModal extends obsidian_1.Modal {
+    constructor(app, plugin, url) {
+        super(app);
+        this.plugin = plugin;
+        this.url = url;
+    }
+    async onOpen() {
+        let { contentEl, url, plugin } = this;
+        const changelog = await (0, obsidian_1.request)({ url });
+        const logDiv = contentEl.createDiv();
+        obsidian_1.MarkdownRenderer.renderMarkdown(changelog, logDiv, "", plugin);
+    }
+    onClose() {
+        this.contentEl.empty();
+    }
+}
+exports.ChangelogModal = ChangelogModal;
+/**
+ * Add a button to an HTMLELement, which, when clicked, pops up a Modal showing the changelog found at the `url` provided.
+ * @param  {App} app
+ * @param  {YourPlugin} plugin
+ * @param  {HTMLElement} containerEl HTMLElement to add the button to
+ * @param  {string} url Where to find the raw markdown content of your changelog file
+ * @param  {string} [displayText="Changlog"] Text to display in the button
+ */
+function addChangelogButton(app, plugin, containerEl, url, displayText = "Changlog") {
+    containerEl.createEl("button", { text: displayText }, (but) => but.onClickEvent(() => {
+        new ChangelogModal(app, plugin, url).open();
+    }));
+}
+exports.addChangelogButton = addChangelogButton;
