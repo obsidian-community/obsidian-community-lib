@@ -36,7 +36,7 @@ export function addAllFeatherIcons(
 ): void {
   Object.values(feather.icons).forEach((i) => {
     const svg = i.toSvg(attr);
-    addIcon("feather-" + i.name, svg);
+    addIcon(`feather-${i.name}`, svg);
   });
 }
 
@@ -45,13 +45,16 @@ export function addAllFeatherIcons(
  *
  * @param name official Name of the Icon (https://feathericons.com/)
  * @param attr SVG Attributes for the Icon. The default should work for most usecases.
+ * @returns {string} Icon name
  */
 export function addFeatherIcon(
   name: string,
   attr = { viewBox: "0 0 24 24", width: "100", height: "100" }
-): void {
+): string | void {
   if (feather.icons[name]) {
-    addIcon(`feather-${name}`, feather.icons[name].toSvg(attr));
+    const iconName = `feather-${name}`;
+    addIcon(iconName, feather.icons[name].toSvg(attr));
+    return iconName;
   } else {
     throw Error(`This Icon (${name}) doesn't exist in the Feather Library.`);
   }
