@@ -2,6 +2,14 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.0.18](https://github.com/SkepticMystic/obsidian-community-lib/compare/0.0.17...0.0.18) (2021-10-27)
+
+
+### Features
+
+* :sparkles: addChanglogButton and ChanglogModal ([895747e](https://github.com/SkepticMystic/obsidian-community-lib/commit/895747e6c19daae8eca69bb6166bd19ce48c1616))
+* :sparkles: Return featherIcon name ([29f2fb9](https://github.com/SkepticMystic/obsidian-community-lib/commit/29f2fb95b1a29e86113cd8294457438e3876721b))
+
 ### [0.0.17](https://github.com/SkepticMystic/obsidian-community-lib/compare/0.0.16...0.0.17) (2021-10-26)
 
 
