@@ -1,4 +1,4 @@
-import { App, Editor, TFile, Vault, View } from "obsidian";
+import { App, Editor, Modal, Plugin, TFile, Vault, View } from "obsidian";
 /**
  * You can await this Function to delay execution
  *
@@ -21,12 +21,13 @@ export declare function addAllFeatherIcons(attr?: {
  *
  * @param name official Name of the Icon (https://feathericons.com/)
  * @param attr SVG Attributes for the Icon. The default should work for most usecases.
+ * @returns {string} Icon name
  */
 export declare function addFeatherIcon(name: string, attr?: {
     viewBox: string;
     width: string;
     height: string;
-}): void;
+}): string | void;
 /**
  * Convert a base64 String to an ArrayBuffer.
  * You can then use the ArrayBuffer to save the asset to disk.
@@ -111,3 +112,25 @@ export interface ResolvedLinks {
  * @param {boolean} [directed=true] Only check if `from` has a link to `to`. If not directed, check in both directions
  */
 export declare function linkedQ(resolvedLinks: ResolvedLinks, from: string, to: string, directed?: boolean): boolean;
+/**
+ * A Modal used in {@link addChangelogButton} to display a changlog fetched from a provided url.
+ * @param  {App} app
+ * @param  {YourPlugin} plugin
+ * @param  {string} url Where to find the raw markdown content of your changelog file
+ */
+export declare class ChangelogModal<YourPlugin extends Plugin> extends Modal {
+    plugin: YourPlugin;
+    url: string;
+    constructor(app: App, plugin: YourPlugin, url: string);
+    onOpen(): Promise<void>;
+    onClose(): void;
+}
+/**
+ * Add a button to an HTMLELement, which, when clicked, pops up a Modal showing the changelog found at the `url` provided.
+ * @param  {App} app
+ * @param  {YourPlugin} plugin
+ * @param  {HTMLElement} containerEl HTMLElement to add the button to
+ * @param  {string} url Where to find the raw markdown content of your changelog file
+ * @param  {string} [displayText="Changlog"] Text to display in the button
+ */
+export declare function addChangelogButton<YourPlugin extends Plugin>(app: App, plugin: YourPlugin, containerEl: HTMLElement, url: string, displayText?: string): void;
