@@ -3,9 +3,13 @@ import {
   addIcon,
   App,
   Editor,
+  MarkdownRenderer,
   MarkdownView,
+  Modal,
   normalizePath,
   Notice,
+  Plugin,
+  request,
   TFile,
   Vault,
   View,
@@ -308,3 +312,52 @@ export function linkedQ(
 //     active: true,
 //   });
 // }
+
+/**
+ * A Modal used in {@link addChangelogButton} to display a changlog fetched from a provided url.
+ * @param  {App} app
+ * @param  {YourPlugin} plugin
+ * @param  {string} url Where to find the raw markdown content of your changelog file
+ */
+export class ChangelogModal<YourPlugin extends Plugin> extends Modal {
+  plugin: YourPlugin;
+  url: string;
+
+  constructor(app: App, plugin: YourPlugin, url: string) {
+    super(app);
+    this.plugin = plugin;
+    this.url = url;
+  }
+
+  async onOpen() {
+    let { contentEl, url, plugin } = this;
+    const changelog = await request({ url });
+    const logDiv = contentEl.createDiv();
+    MarkdownRenderer.renderMarkdown(changelog, logDiv, "", plugin);
+  }
+
+  onClose() {
+    this.contentEl.empty();
+  }
+}
+/**
+ * Add a button to an HTMLELement, which, when clicked, pops up a Modal showing the changelog found at the `url` provided.
+ * @param  {App} app
+ * @param  {YourPlugin} plugin
+ * @param  {HTMLElement} containerEl HTMLElement to add the button to
+ * @param  {string} url Where to find the raw markdown content of your changelog file
+ * @param  {string} [displayText="Changlog"] Text to display in the button
+ */
+export function addChangelogButton<YourPlugin extends Plugin>(
+  app: App,
+  plugin: YourPlugin,
+  containerEl: HTMLElement,
+  url: string,
+  displayText: string = "Changlog"
+) {
+  containerEl.createEl("button", { text: displayText }, (but) =>
+    but.onClickEvent(() => {
+      new ChangelogModal(app, plugin, url).open();
+    })
+  );
+}

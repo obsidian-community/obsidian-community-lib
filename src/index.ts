@@ -13,4 +13,6 @@ export {
   openOrSwitch,
   ResolvedLinks,
   linkedQ,
+  addChangelogButton,
+  ChangelogModal,
 } from "./utils";
