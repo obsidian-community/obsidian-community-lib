@@ -171,14 +171,14 @@ export const isInVault = (
 /**
  * When hovering a link going to `to`, show the Obsidian hover-preview of that note
  * @param  {MouseEvent} event
- * @param  {TView} view The view with the link being hovered
+ * @param  {YourView} view The view with the link being hovered
  * @param  {string} to The basename of the note to preview
- * @typeParam {Tview} The view being hovered
+ * @template YourView The ViewType of your view
  * @returns void
  */
-export function hoverPreview<TView extends View>(
+export function hoverPreview<YourView extends View>(
   event: MouseEvent,
-  view: TView,
+  view: YourView,
   to: string
 ): void {
   const targetEl = event.target as HTMLElement;
