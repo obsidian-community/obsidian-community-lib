@@ -1,3 +1,7 @@
+/**
+ * This module contains various utility functions commonly used in Obsidian plugins.
+ * @module obsidian-community-lib
+ */
 import * as feather from "feather-icons";
 import {
   addIcon,
@@ -165,14 +169,16 @@ export const isInVault = (
 ): boolean => !!app.metadataCache.getFirstLinkpathDest(noteName, sourcePath);
 
 /**
+ * When hovering a link going to `to`, show the Obsidian hover-preview of that note
  * @param  {MouseEvent} event
- * @param  {TView} view The view being hovered
+ * @param  {YourView} view The view with the link being hovered
  * @param  {string} to The basename of the note to preview
+ * @template YourView The ViewType of your view
  * @returns void
  */
-export function hoverPreview<TView extends View>(
+export function hoverPreview<YourView extends View>(
   event: MouseEvent,
-  view: TView,
+  view: YourView,
   to: string
 ): void {
   const targetEl = event.target as HTMLElement;
@@ -317,7 +323,9 @@ export function linkedQ(
 // }
 
 /**
- * A Modal used in {@link addChangelogButton} to display a changlog fetched from a provided url.
+ * A Modal used in {@link addChangelogButton} to display a changelog fetched from a provided url.
+ *
+ * ![](https://i.imgur.com/NMwM50E.png)
  * @param  {App} app
  * @param  {YourPlugin} plugin
  * @param  {string} url Where to find the raw markdown content of your changelog file
@@ -344,7 +352,9 @@ export class ChangelogModal<YourPlugin extends Plugin> extends Modal {
   }
 }
 /**
- * Add a button to an HTMLELement, which, when clicked, pops up a Modal showing the changelog found at the `url` provided.
+ * Add a button to an HTMLELement, which, when clicked, pops up a {@link ChangelogModal} showing the changelog found at the `url` provided.
+ *
+ * ![](https://i.imgur.com/Hi4gyyv.png)
  * @param  {App} app
  * @param  {YourPlugin} plugin
  * @param  {HTMLElement} containerEl HTMLElement to add the button to
