@@ -1,6 +1,10 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.addChangelogButton = exports.ChangelogModal = exports.linkedQ = exports.openOrSwitch = exports.createNewMDNote = exports.hoverPreview = exports.isInVault = exports.getSelectionFromCurrFile = exports.getSelectionFromEditor = exports.copy = exports.getAvailablePathForAttachments = exports.base64ToArrayBuffer = exports.addFeatherIcon = exports.addAllFeatherIcons = exports.wait = void 0;
+/**
+ * This module contains various utility functions commonly used in Obsidian plugins.
+ * @module obsidian-community-lib
+ */
 const feather = require("feather-icons");
 const obsidian_1 = require("obsidian");
 /**
@@ -137,9 +141,11 @@ exports.getSelectionFromCurrFile = getSelectionFromCurrFile;
 const isInVault = (app, noteName, sourcePath = "") => !!app.metadataCache.getFirstLinkpathDest(noteName, sourcePath);
 exports.isInVault = isInVault;
 /**
+ * When hovering a link going to `to`, show the Obsidian hover-preview of that note
  * @param  {MouseEvent} event
- * @param  {TView} view The view being hovered
+ * @param  {YourView} view The view with the link being hovered
  * @param  {string} to The basename of the note to preview
+ * @template YourView The ViewType of your view
  * @returns void
  */
 function hoverPreview(event, view, to) {
@@ -260,7 +266,9 @@ exports.linkedQ = linkedQ;
 //   });
 // }
 /**
- * A Modal used in {@link addChangelogButton} to display a changlog fetched from a provided url.
+ * A Modal used in {@link addChangelogButton} to display a changelog fetched from a provided url.
+ *
+ * ![](https://i.imgur.com/NMwM50E.png)
  * @param  {App} app
  * @param  {YourPlugin} plugin
  * @param  {string} url Where to find the raw markdown content of your changelog file
@@ -283,7 +291,9 @@ class ChangelogModal extends obsidian_1.Modal {
 }
 exports.ChangelogModal = ChangelogModal;
 /**
- * Add a button to an HTMLELement, which, when clicked, pops up a Modal showing the changelog found at the `url` provided.
+ * Add a button to an HTMLELement, which, when clicked, pops up a {@link ChangelogModal} showing the changelog found at the `url` provided.
+ *
+ * ![](https://i.imgur.com/Hi4gyyv.png)
  * @param  {App} app
  * @param  {YourPlugin} plugin
  * @param  {HTMLElement} containerEl HTMLElement to add the button to
