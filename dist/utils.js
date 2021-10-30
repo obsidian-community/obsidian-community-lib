@@ -1,6 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.addChangelogButton = exports.ChangelogModal = exports.linkedQ = exports.openOrSwitch = exports.createNewMDNote = exports.hoverPreview = exports.isInVault = exports.getSelectionFromCurrFile = exports.getSelectionFromEditor = exports.copy = exports.getAvailablePathForAttachments = exports.base64ToArrayBuffer = exports.addFeatherIcon = exports.addAllFeatherIcons = exports.wait = void 0;
+exports.addChangelogButton = exports.ChangelogModal = exports.saveViewSide = exports.openView = exports.linkedQ = exports.openOrSwitch = exports.createNewMDNote = exports.hoverPreview = exports.isInVault = exports.getSelectionFromCurrFile = exports.getSelectionFromEditor = exports.copy = exports.getAvailablePathForAttachments = exports.base64ToArrayBuffer = exports.addFeatherIcon = exports.addAllFeatherIcons = exports.wait = void 0;
 /**
  * This module contains various utility functions commonly used in Obsidian plugins.
  * @module obsidian-community-lib
@@ -141,21 +141,24 @@ exports.getSelectionFromCurrFile = getSelectionFromCurrFile;
 const isInVault = (app, noteName, sourcePath = "") => !!app.metadataCache.getFirstLinkpathDest(noteName, sourcePath);
 exports.isInVault = isInVault;
 /**
- * When hovering a link going to `to`, show the Obsidian hover-preview of that note
+ * When hovering a link going to `to`, show the Obsidian hover-preview of that note.
+ *
+ * You probably have to hold down `Ctrl` when hovering the link for the preview to appear!
  * @param  {MouseEvent} event
  * @param  {YourView} view The view with the link being hovered
- * @param  {string} to The basename of the note to preview
+ * @param  {string} to The basename of the note to preview. Not necessary if the element being hovered has `to` as its `innerText`
  * @template YourView The ViewType of your view
  * @returns void
  */
 function hoverPreview(event, view, to) {
     const targetEl = event.target;
+    const linkText = to ?? targetEl.innerText;
     view.app.workspace.trigger("hover-link", {
         event,
         source: view.getViewType(),
         hoverParent: view,
         targetEl,
-        linktext: to,
+        linkText,
     });
 }
 exports.hoverPreview = hoverPreview;
@@ -242,29 +245,54 @@ function linkedQ(resolvedLinks, from, to, directed = true) {
         return fromTo;
 }
 exports.linkedQ = linkedQ;
-// /**
-//  * Initialise
-//  * @param  {string} viewType
-//  * @param  {Constructor<YourView>} viewClass
-//  * @returns {Promise}
-//  */
-// export async function initView<YourView extends ItemView>(
-//   viewType: string,
-//   viewClass: Constructor<YourView>
-// ): Promise<void> {
-//   let leaf: WorkspaceLeaf = null;
-//   for (leaf of this.app.workspace.getLeavesOfType(viewType)) {
-//     if (leaf.view instanceof viewClass) {
-//       return;
-//     }
-//     await leaf.setViewState({ type: "empty" });
-//     break;
-//   }
-//   (leaf ?? this.app.workspace.getRightLeaf(false)).setViewState({
-//     type: viewType,
-//     active: true,
-//   });
-// }
+/**
+ * Open your view on the chosen `side` if it isn't already open
+ * @param  {App} app
+ * @param  {string} viewType
+ * @param  {Constructor<YourView>} viewClass The class constructor of your view
+ * @param  {"left"|"right"} [side="right"]
+ * @returns {Promise<void>}
+ */
+async function openView(app, viewType, viewClass, side = "right") {
+    let leaf = null;
+    for (leaf of app.workspace.getLeavesOfType(viewType)) {
+        if (leaf.view instanceof viewClass) {
+            return;
+        }
+        await leaf.setViewState({ type: "empty" });
+        break;
+    }
+    leaf =
+        leaf ?? side === "right"
+            ? app.workspace.getRightLeaf(false)
+            : app.workspace.getLeftLeaf(false);
+    leaf.setViewState({
+        type: viewType,
+        active: true,
+    });
+}
+exports.openView = openView;
+/**
+ * Check which side of the workspace your `viewType` is on, and save it into `plugin.settings[settingName]`.
+ *
+ * **Tip**: Run this function on `plugin.unload` to save the last side your view was on when closing, then {@link openView} on the same side it was last.
+ * @param  {App} app
+ * @param  {YourPlugin} plugin
+ * @param  {string} viewType
+ * @param  {string} settingName
+ * @returns {"left" | "right"} `side`
+ */
+async function saveViewSide(app, plugin, viewType, settingName) {
+    const leaf = app.workspace.getLeavesOfType(viewType)[0];
+    //@ts-ignore
+    const side = leaf.getRoot().side;
+    //@ts-ignore
+    plugin.settings[settingName] = side;
+    //@ts-ignore
+    await plugin.saveSettings();
+    return side;
+}
+exports.saveViewSide = saveViewSide;
 /**
  * A Modal used in {@link addChangelogButton} to display a changelog fetched from a provided url.
  *
