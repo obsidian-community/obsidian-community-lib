@@ -352,6 +352,12 @@ export async function saveViewSide<YourPlugin extends Plugin>(
   settingName: string
 ): Promise<"left" | "right"> {
   const leaf = app.workspace.getLeavesOfType(viewType)[0];
+  if (!leaf) {
+    console.info(
+      `Obsidian-Community-Lib: No instance of '${viewType}' open, cannot save side`
+    );
+    return;
+  }
   //@ts-ignore
   const side: "left" | "right" = leaf.getRoot().side;
   //@ts-ignore

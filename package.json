@@ -35,9 +35,6 @@
         "type": "git",
         "url": "git+https://github.com/obsidian-community/obsidian-community-lib.git"
     },
-    "publishConfig": {
-        "registry": "https://github.com/obsidian-community/obsidian-community-lib.git"
-    },
     "keywords": [
         "obsidianmd"
     ],
