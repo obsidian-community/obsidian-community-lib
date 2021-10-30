@@ -284,6 +284,10 @@ exports.openView = openView;
  */
 async function saveViewSide(app, plugin, viewType, settingName) {
     const leaf = app.workspace.getLeavesOfType(viewType)[0];
+    if (!leaf) {
+        console.info(`Obsidian-Community-Lib: No instance of '${viewType}' open, cannot save side`);
+        return;
+    }
     //@ts-ignore
     const side = leaf.getRoot().side;
     //@ts-ignore

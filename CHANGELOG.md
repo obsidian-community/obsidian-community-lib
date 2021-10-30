@@ -1,4 +1,16 @@
 ## Advanced Cursors Changelog
+### [0.1.1](https://github.com/obsidian-community/obsidian-community-lib/compare/0.1.0...0.1.1) (2021-10-30)
+
+
+### Bug Fixes
+
+* :bug: Only saveViewSide if leaf of `viewType` is open ([3b2eb58](https://github.com/obsidian-community/obsidian-community-lib/commit/3b2eb58ece49ca1f28645dd12621c639cd9d2050))
+
+
+### Documentation
+
+* :memo: Update docs site ([82f6793](https://github.com/obsidian-community/obsidian-community-lib/commit/82f679379f88577ef2e3b2c04cd123e72aa450a3))
+
 ## [0.1.0](https://github.com/obsidian-community/obsidian-community-lib/compare/0.0.19...0.1.0) (2021-10-30)
 
 
