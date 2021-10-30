@@ -387,7 +387,9 @@ export class ChangelogModal<YourPlugin extends Plugin> extends Modal {
 
   async onOpen() {
     let { contentEl, url, plugin } = this;
+    contentEl.createDiv({ text: `Waiting for content from ${url}` });
     const changelog = await request({ url });
+    contentEl.empty();
     const logDiv = contentEl.createDiv();
     MarkdownRenderer.renderMarkdown(changelog, logDiv, "", plugin);
   }
