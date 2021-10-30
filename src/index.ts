@@ -15,4 +15,6 @@ export {
   linkedQ,
   addChangelogButton,
   ChangelogModal,
+  openView,
+  saveViewSide,
 } from "./utils";
