@@ -1,4 +1,4 @@
-import { App, Editor, Modal, Plugin, TFile, Vault, View } from "obsidian";
+import { App, Constructor, Editor, ItemView, Modal, Plugin, TFile, Vault } from "obsidian";
 /**
  * You can await this Function to delay execution
  *
@@ -74,14 +74,16 @@ export declare function getSelectionFromCurrFile(app: App, cached?: boolean): Pr
  */
 export declare const isInVault: (app: App, noteName: string, sourcePath?: string) => boolean;
 /**
- * When hovering a link going to `to`, show the Obsidian hover-preview of that note
+ * When hovering a link going to `to`, show the Obsidian hover-preview of that note.
+ *
+ * You probably have to hold down `Ctrl` when hovering the link for the preview to appear!
  * @param  {MouseEvent} event
  * @param  {YourView} view The view with the link being hovered
- * @param  {string} to The basename of the note to preview
+ * @param  {string} to The basename of the note to preview. Not necessary if the element being hovered has `to` as its `innerText`
  * @template YourView The ViewType of your view
  * @returns void
  */
-export declare function hoverPreview<YourView extends View>(event: MouseEvent, view: YourView, to: string): void;
+export declare function hoverPreview<YourView extends ItemView>(event: MouseEvent, view: YourView, to?: string): void;
 /**
  * Create a new markdown note named `newName` in the user's preffered new-note-folder.
  * @param  {App} app
@@ -114,6 +116,26 @@ export interface ResolvedLinks {
  * @param {boolean} [directed=true] Only check if `from` has a link to `to`. If not directed, check in both directions
  */
 export declare function linkedQ(resolvedLinks: ResolvedLinks, from: string, to: string, directed?: boolean): boolean;
+/**
+ * Open your view on the chosen `side` if it isn't already open
+ * @param  {App} app
+ * @param  {string} viewType
+ * @param  {Constructor<YourView>} viewClass The class constructor of your view
+ * @param  {"left"|"right"} [side="right"]
+ * @returns {Promise<void>}
+ */
+export declare function openView<YourView extends ItemView>(app: App, viewType: string, viewClass: Constructor<YourView>, side?: "left" | "right"): Promise<void>;
+/**
+ * Check which side of the workspace your `viewType` is on, and save it into `plugin.settings[settingName]`.
+ *
+ * **Tip**: Run this function on `plugin.unload` to save the last side your view was on when closing, then {@link openView} on the same side it was last.
+ * @param  {App} app
+ * @param  {YourPlugin} plugin
+ * @param  {string} viewType
+ * @param  {string} settingName
+ * @returns {"left" | "right"} `side`
+ */
+export declare function saveViewSide<YourPlugin extends Plugin>(app: App, plugin: YourPlugin, viewType: string, settingName: string): Promise<"left" | "right">;
 /**
  * A Modal used in {@link addChangelogButton} to display a changelog fetched from a provided url.
  *

@@ -1,6 +1,16 @@
-# Changelog
+## Advanced Cursors Changelog
+## [0.1.0](https://github.com/obsidian-community/obsidian-community-lib/compare/0.0.19...0.1.0) (2021-10-30)
 
-All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
+
+### Features
+
+* :sparkles: Not necessary to pass in `to` to `hoverPreview` if the `event.target.innerText` is already the `linkText` ([5ce91cc](https://github.com/obsidian-community/obsidian-community-lib/commit/5ce91cc5a9e7c65b8bafebf06a1d752207dd21e6))
+* :sparkles: openView + saveViewSide ([6dc48c6](https://github.com/obsidian-community/obsidian-community-lib/commit/6dc48c6c123578a8bbd474231f68517f428ddbb2))
+
+
+### Documentation
+
+* :memo: Update docs site ([e8ca5e6](https://github.com/obsidian-community/obsidian-community-lib/commit/e8ca5e6ebc05061abc7f4035df0806f799923678))
 
 ### [0.0.19](https://github.com/SkepticMystic/obsidian-community-lib/compare/0.0.17...0.0.19) (2021-10-28)
 

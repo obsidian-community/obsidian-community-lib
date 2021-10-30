@@ -6,7 +6,9 @@ import * as feather from "feather-icons";
 import {
   addIcon,
   App,
+  Constructor,
   Editor,
+  ItemView,
   MarkdownRenderer,
   MarkdownView,
   Modal,
@@ -16,7 +18,6 @@ import {
   request,
   TFile,
   Vault,
-  View,
   WorkspaceLeaf,
 } from "obsidian";
 
@@ -169,26 +170,29 @@ export const isInVault = (
 ): boolean => !!app.metadataCache.getFirstLinkpathDest(noteName, sourcePath);
 
 /**
- * When hovering a link going to `to`, show the Obsidian hover-preview of that note
+ * When hovering a link going to `to`, show the Obsidian hover-preview of that note.
+ *
+ * You probably have to hold down `Ctrl` when hovering the link for the preview to appear!
  * @param  {MouseEvent} event
  * @param  {YourView} view The view with the link being hovered
- * @param  {string} to The basename of the note to preview
+ * @param  {string} to The basename of the note to preview. Not necessary if the element being hovered has `to` as its `innerText`
  * @template YourView The ViewType of your view
  * @returns void
  */
-export function hoverPreview<YourView extends View>(
+export function hoverPreview<YourView extends ItemView>(
   event: MouseEvent,
   view: YourView,
-  to: string
+  to?: string
 ): void {
   const targetEl = event.target as HTMLElement;
+  const linkText = to ?? targetEl.innerText;
 
   view.app.workspace.trigger("hover-link", {
     event,
     source: view.getViewType(),
     hoverParent: view,
     targetEl,
-    linktext: to,
+    linkText,
   });
 }
 
@@ -298,29 +302,64 @@ export function linkedQ(
   } else return fromTo;
 }
 
-// /**
-//  * Initialise
-//  * @param  {string} viewType
-//  * @param  {Constructor<YourView>} viewClass
-//  * @returns {Promise}
-//  */
-// export async function initView<YourView extends ItemView>(
-//   viewType: string,
-//   viewClass: Constructor<YourView>
-// ): Promise<void> {
-//   let leaf: WorkspaceLeaf = null;
-//   for (leaf of this.app.workspace.getLeavesOfType(viewType)) {
-//     if (leaf.view instanceof viewClass) {
-//       return;
-//     }
-//     await leaf.setViewState({ type: "empty" });
-//     break;
-//   }
-//   (leaf ?? this.app.workspace.getRightLeaf(false)).setViewState({
-//     type: viewType,
-//     active: true,
-//   });
-// }
+/**
+ * Open your view on the chosen `side` if it isn't already open
+ * @param  {App} app
+ * @param  {string} viewType
+ * @param  {Constructor<YourView>} viewClass The class constructor of your view
+ * @param  {"left"|"right"} [side="right"]
+ * @returns {Promise<void>}
+ */
+export async function openView<YourView extends ItemView>(
+  app: App,
+  viewType: string,
+  viewClass: Constructor<YourView>,
+  side: "left" | "right" = "right"
+): Promise<void> {
+  let leaf: WorkspaceLeaf = null;
+  for (leaf of app.workspace.getLeavesOfType(viewType)) {
+    if (leaf.view instanceof viewClass) {
+      return;
+    }
+    await leaf.setViewState({ type: "empty" });
+    break;
+  }
+
+  leaf =
+    leaf ?? side === "right"
+      ? app.workspace.getRightLeaf(false)
+      : app.workspace.getLeftLeaf(false);
+
+  leaf.setViewState({
+    type: viewType,
+    active: true,
+  });
+}
+/**
+ * Check which side of the workspace your `viewType` is on, and save it into `plugin.settings[settingName]`.
+ *
+ * **Tip**: Run this function on `plugin.unload` to save the last side your view was on when closing, then {@link openView} on the same side it was last.
+ * @param  {App} app
+ * @param  {YourPlugin} plugin
+ * @param  {string} viewType
+ * @param  {string} settingName
+ * @returns {"left" | "right"} `side`
+ */
+export async function saveViewSide<YourPlugin extends Plugin>(
+  app: App,
+  plugin: YourPlugin,
+  viewType: string,
+  settingName: string
+): Promise<"left" | "right"> {
+  const leaf = app.workspace.getLeavesOfType(viewType)[0];
+  //@ts-ignore
+  const side: "left" | "right" = leaf.getRoot().side;
+  //@ts-ignore
+  plugin.settings[settingName] = side;
+  //@ts-ignore
+  await plugin.saveSettings();
+  return side;
+}
 
 /**
  * A Modal used in {@link addChangelogButton} to display a changelog fetched from a provided url.

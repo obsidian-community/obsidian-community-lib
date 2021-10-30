@@ -1,6 +1,6 @@
 {
     "name": "obsidian-community-lib",
-    "version": "0.0.19",
+    "version": "0.1.0",
     "description": "Commonly used functions in Obsidian plugins",
     "main": "dist/index.js",
     "types": "dist/index.d.ts",
@@ -14,11 +14,29 @@
         "release": "standard-version"
     },
     "standard-version": {
-        "t": ""
+        "t": "",
+        "types": [
+            {
+                "type": "feat",
+                "section": "Features"
+            },
+            {
+                "type": "fix",
+                "section": "Bug Fixes"
+            },
+            {
+                "type": "docs",
+                "section": "Documentation"
+            }
+        ],
+        "header": "## Advanced Cursors Changelog"
     },
     "repository": {
         "type": "git",
-        "url": "git+https://github.com/SkepticMystic/obsidian-community-lib.git"
+        "url": "git+https://github.com/obsidian-community/obsidian-community-lib.git"
+    },
+    "publishConfig": {
+        "registry": "https://github.com/obsidian-community/obsidian-community-lib.git"
     },
     "keywords": [
         "obsidianmd"
@@ -26,9 +44,9 @@
     "author": "SkepticMystic",
     "license": "ISC",
     "bugs": {
-        "url": "https://github.com/SkepticMystic/obsidian-community-lib/issues"
+        "url": "https://github.com/obsidian-community/obsidian-community-lib/issues"
     },
-    "homepage": "https://github.com/SkepticMystic/obsidian-community-lib#readme",
+    "homepage": "https://github.com/obsidian-community/obsidian-community-lib#readme",
     "devDependencies": {
         "@types/feather-icons": "^4.7.0",
         "standard-version": "^9.3.2",
