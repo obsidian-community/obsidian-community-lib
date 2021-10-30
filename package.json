@@ -1,6 +1,6 @@
 {
     "name": "obsidian-community-lib",
-    "version": "0.0.19",
+    "version": "0.1.0",
     "description": "Commonly used functions in Obsidian plugins",
     "main": "dist/index.js",
     "types": "dist/index.d.ts",
