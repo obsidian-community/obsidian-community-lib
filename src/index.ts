@@ -11,10 +11,11 @@ export {
   isInVault,
   createNewMDNote,
   openOrSwitch,
-  ResolvedLinks,
   linkedQ,
   addChangelogButton,
   ChangelogModal,
   openView,
   saveViewSide,
 } from "./utils";
+
+export { ResolvedLinks } from "./interfaces";

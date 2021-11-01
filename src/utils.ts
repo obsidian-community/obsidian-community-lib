@@ -20,6 +20,7 @@ import {
   Vault,
   WorkspaceLeaf,
 } from "obsidian";
+import { ResolvedLinks } from "./interfaces";
 
 /**
  * You can await this Function to delay execution
@@ -294,11 +295,6 @@ export async function openOrSwitch(
   }
 }
 
-export interface ResolvedLinks {
-  [from: string]: {
-    [to: string]: number;
-  };
-}
 /**
  * Given a list of resolved links from app.metadataCache, check if `from` has a link to `to`
  * @param  {ResolvedLinks} resolvedLinks
