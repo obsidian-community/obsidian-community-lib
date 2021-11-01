@@ -1,4 +1,21 @@
 ## Advanced Cursors Changelog
+### [0.1.2](https://github.com/obsidian-community/obsidian-community-lib/compare/0.1.1...0.1.2) (2021-11-01)
+
+
+### Features
+
+* :sparkles: Two util functions: stripMD + addMD ([1b3d7ac](https://github.com/obsidian-community/obsidian-community-lib/commit/1b3d7ac670d917df9a347f5eeaa21d5172581ded))
+
+
+### Bug Fixes
+
+* :bug: Fix [#17](https://github.com/obsidian-community/obsidian-community-lib/issues/17): openOrSwitch shouldn't need an open md note to work ([3fabd62](https://github.com/obsidian-community/obsidian-community-lib/commit/3fabd62d98f26a46b9d9726179966785296e2647))
+
+
+### Documentation
+
+* :memo: Update docs site ([61b8894](https://github.com/obsidian-community/obsidian-community-lib/commit/61b88949cfe7d49fc9737bc397151cf87b4e7450))
+
 ### [0.1.1](https://github.com/obsidian-community/obsidian-community-lib/compare/0.1.0...0.1.1) (2021-10-30)
 
 
