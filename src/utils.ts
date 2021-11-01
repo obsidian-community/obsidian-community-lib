@@ -219,6 +219,29 @@ export async function createNewMDNote(
 }
 
 /**
+ * Add '.md' to a `noteName` if it isn't already there.
+ * @param  {string} noteName with or without '.md' on the end.
+ * @returns {string} noteName with '.md' on the end.
+ */
+export const addMD = (noteName: string): string => {
+  let withMD = noteName.slice();
+  if (!withMD.endsWith(".md")) {
+    withMD += ".md";
+  }
+  return withMD;
+};
+
+/**
+ * Strip '.md' off the end of a note name to get its basename.
+ *
+ * Works with the edgecase where a note has '.md' in its basename: `Obsidian.md.md`, for example.
+ * @param  {string} noteName with or without '.md' on the end.
+ * @returns {string} noteName without '.md'
+ */
+export const stripMD = (noteName: string): string =>
+  noteName.split(".md").slice(0, -1).join(".md");
+
+/**
  * When clicking a link, check if that note is already open in another leaf, and switch to that leaf, if so. Otherwise, open the note in a new pane
  * @param  {App} app
  * @param  {string} dest Basename of note to open to open
@@ -250,7 +273,7 @@ export async function openOrSwitch(
   // For all open leaves, if the leave's basename is equal to the link destination, rather activate that leaf instead of opening it in two panes
   workspace.iterateAllLeaves((leaf) => {
     if (leaf.view instanceof MarkdownView) {
-      if (leaf.view?.file?.basename === dest) {
+      if (leaf.view?.file?.basename === destStripped) {
         leavesWithDestAlreadyOpen.push(leaf);
       }
     }
