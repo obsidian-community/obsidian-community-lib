@@ -1,6 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.addChangelogButton = exports.ChangelogModal = exports.saveViewSide = exports.openView = exports.linkedQ = exports.openOrSwitch = exports.stripMD = exports.addMD = exports.createNewMDNote = exports.hoverPreview = exports.isInVault = exports.getSelectionFromCurrFile = exports.getSelectionFromEditor = exports.copy = exports.getAvailablePathForAttachments = exports.base64ToArrayBuffer = exports.addFeatherIcon = exports.addAllFeatherIcons = exports.wait = void 0;
+exports.waitForResolvedLinks = exports.resolvedLinksComplete = exports.addChangelogButton = exports.ChangelogModal = exports.saveViewSide = exports.openView = exports.linkedQ = exports.openOrSwitch = exports.stripMD = exports.addMD = exports.createNewMDNote = exports.hoverPreview = exports.isInVault = exports.getSelectionFromCurrFile = exports.getSelectionFromEditor = exports.copy = exports.getAvailablePathForAttachments = exports.base64ToArrayBuffer = exports.addFeatherIcon = exports.addAllFeatherIcons = exports.wait = void 0;
 /**
  * This module contains various utility functions commonly used in Obsidian plugins.
  * @module obsidian-community-lib
@@ -362,3 +362,34 @@ function addChangelogButton(app, plugin, containerEl, url, displayText = "Changl
     }));
 }
 exports.addChangelogButton = addChangelogButton;
+/**
+ * Check if `app.metadataCache.ResolvedLinks` have fully initalised.
+ *
+ * Used with {@link waitForResolvedLinks}.
+ * @param {App} app
+ * @param  {number} noFiles Number of files in your vault.
+ * @returns {boolean}
+ */
+function resolvedLinksComplete(app, noFiles) {
+    const { resolvedLinks } = app.metadataCache;
+    return Object.keys(resolvedLinks).length === noFiles;
+}
+exports.resolvedLinksComplete = resolvedLinksComplete;
+/**
+ * Wait for `app.metadataCache.ResolvedLinks` to have fully initialised.
+ * @param {App} app
+ * @param  {number} [delay=1000] Number of milliseconds to wait between each check.
+ * @param {number} [max=50] Maximum number of iterations to check before throwing an error and breaking out of the loop.
+ */
+async function waitForResolvedLinks(app, delay = 1000, max = 50) {
+    const noFiles = app.vault.getMarkdownFiles().length;
+    let i = 0;
+    while (!resolvedLinksComplete(app, noFiles) && i < max) {
+        await wait(delay);
+        i++;
+    }
+    if (i === max) {
+        throw Error("Obsidian-Community-Lib: ResolvedLinks did not finish initialising. `max` iterations was reached first.");
+    }
+}
+exports.waitForResolvedLinks = waitForResolvedLinks;

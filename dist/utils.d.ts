@@ -1,4 +1,5 @@
 import { App, Constructor, Editor, ItemView, Modal, Plugin, TFile, Vault } from "obsidian";
+import { ResolvedLinks } from "./interfaces";
 /**
  * You can await this Function to delay execution
  *
@@ -117,11 +118,6 @@ export declare const stripMD: (noteName: string) => string;
 export declare function openOrSwitch(app: App, dest: string, event: MouseEvent, options?: {
     createNewFile: boolean;
 }): Promise<void>;
-export interface ResolvedLinks {
-    [from: string]: {
-        [to: string]: number;
-    };
-}
 /**
  * Given a list of resolved links from app.metadataCache, check if `from` has a link to `to`
  * @param  {ResolvedLinks} resolvedLinks
@@ -176,3 +172,19 @@ export declare class ChangelogModal<YourPlugin extends Plugin> extends Modal {
  * @param  {string} [displayText="Changlog"] Text to display in the button
  */
 export declare function addChangelogButton<YourPlugin extends Plugin>(app: App, plugin: YourPlugin, containerEl: HTMLElement, url: string, displayText?: string): void;
+/**
+ * Check if `app.metadataCache.ResolvedLinks` have fully initalised.
+ *
+ * Used with {@link waitForResolvedLinks}.
+ * @param {App} app
+ * @param  {number} noFiles Number of files in your vault.
+ * @returns {boolean}
+ */
+export declare function resolvedLinksComplete(app: App, noFiles: number): boolean;
+/**
+ * Wait for `app.metadataCache.ResolvedLinks` to have fully initialised.
+ * @param {App} app
+ * @param  {number} [delay=1000] Number of milliseconds to wait between each check.
+ * @param {number} [max=50] Maximum number of iterations to check before throwing an error and breaking out of the loop.
+ */
+export declare function waitForResolvedLinks(app: App, delay?: number, max?: number): Promise<void>;
