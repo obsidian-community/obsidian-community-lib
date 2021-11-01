@@ -242,11 +242,11 @@ export const stripMD = (noteName: string): string =>
   noteName.split(".md").slice(0, -1).join(".md");
 
 /**
- * When clicking a link, check if that note is already open in another leaf, and switch to that leaf, if so. Otherwise, open the note in a new pane
+ * When clicking a link, check if that note is already open in another leaf, and switch to that leaf, if so. Otherwise, open the note in a new pane.
  * @param  {App} app
  * @param  {string} dest Basename of note to open to open
  * @param  {MouseEvent} event
- * @param  {{createNewFile:boolean}} [options={createNewFile:true}]
+ * @param  {{createNewFile:boolean}} [options={createNewFile:true}] Whether or not to create `dest` file if it doesn't exist. If `false`, simply return from the function.
  * @returns Promise
  */
 export async function openOrSwitch(
@@ -258,13 +258,13 @@ export async function openOrSwitch(
   } = { createNewFile: true }
 ): Promise<void> {
   const { workspace } = app;
-  const currFile = workspace.getActiveFile();
-  let destFile = app.metadataCache.getFirstLinkpathDest(dest, currFile.path);
+  const destStripped = stripMD(dest);
+  let destFile = app.metadataCache.getFirstLinkpathDest(destStripped, "");
 
   // If dest doesn't exist, make it
   if (!destFile) {
     if (options.createNewFile) {
-      destFile = await createNewMDNote(app, dest, currFile.path);
+      destFile = await createNewMDNote(app, destStripped);
     } else return;
   }
 
