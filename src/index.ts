@@ -16,6 +16,10 @@ export {
   ChangelogModal,
   openView,
   saveViewSide,
+  addMD,
+  stripMD,
+  resolvedLinksComplete,
+  waitForResolvedLinks,
 } from "./utils";
 
 export { ResolvedLinks } from "./interfaces";

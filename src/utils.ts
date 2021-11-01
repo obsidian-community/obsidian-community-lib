@@ -440,3 +440,39 @@ export function addChangelogButton<YourPlugin extends Plugin>(
     })
   );
 }
+/**
+ * Check if `app.metadataCache.ResolvedLinks` have fully initalised.
+ *
+ * Used with {@link waitForResolvedLinks}.
+ * @param {App} app
+ * @param  {number} noFiles Number of files in your vault.
+ * @returns {boolean}
+ */
+export function resolvedLinksComplete(app: App, noFiles: number): boolean {
+  const { resolvedLinks } = app.metadataCache;
+  return Object.keys(resolvedLinks).length === noFiles;
+}
+
+/**
+ * Wait for `app.metadataCache.ResolvedLinks` to have fully initialised.
+ * @param {App} app
+ * @param  {number} [delay=1000] Number of milliseconds to wait between each check.
+ * @param {number} [max=50] Maximum number of iterations to check before throwing an error and breaking out of the loop.
+ */
+export async function waitForResolvedLinks(
+  app: App,
+  delay: number = 1000,
+  max: number = 50
+) {
+  const noFiles = app.vault.getMarkdownFiles().length;
+  let i = 0;
+  while (!resolvedLinksComplete(app, noFiles) && i < max) {
+    await wait(delay);
+    i++;
+  }
+  if (i === max) {
+    throw Error(
+      "Obsidian-Community-Lib: ResolvedLinks did not finish initialising. `max` iterations was reached first."
+    );
+  }
+}
