@@ -1,4 +1,16 @@
 ## Advanced Cursors Changelog
+### [0.1.3](https://github.com/obsidian-community/obsidian-community-lib/compare/0.1.2...0.1.3) (2021-11-01)
+
+
+### Features
+
+* :sparkles: Function: waitForResolvedLinks ([1e5e4df](https://github.com/obsidian-community/obsidian-community-lib/commit/1e5e4dffa2cf6361f8aade1bb949ea8cf41782ca))
+
+
+### Documentation
+
+* :memo: Update docs site ([56add52](https://github.com/obsidian-community/obsidian-community-lib/commit/56add52bd96bad28de3ae942fb4115129a74e892))
+
 ### [0.1.2](https://github.com/obsidian-community/obsidian-community-lib/compare/0.1.1...0.1.2) (2021-11-01)
 
 
