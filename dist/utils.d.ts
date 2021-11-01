@@ -93,11 +93,25 @@ export declare function hoverPreview<YourView extends ItemView>(event: MouseEven
  */
 export declare function createNewMDNote(app: App, newName: string, currFilePath?: string): Promise<TFile>;
 /**
- * When clicking a link, check if that note is already open in another leaf, and switch to that leaf, if so. Otherwise, open the note in a new pane
+ * Add '.md' to a `noteName` if it isn't already there.
+ * @param  {string} noteName with or without '.md' on the end.
+ * @returns {string} noteName with '.md' on the end.
+ */
+export declare const addMD: (noteName: string) => string;
+/**
+ * Strip '.md' off the end of a note name to get its basename.
+ *
+ * Works with the edgecase where a note has '.md' in its basename: `Obsidian.md.md`, for example.
+ * @param  {string} noteName with or without '.md' on the end.
+ * @returns {string} noteName without '.md'
+ */
+export declare const stripMD: (noteName: string) => string;
+/**
+ * When clicking a link, check if that note is already open in another leaf, and switch to that leaf, if so. Otherwise, open the note in a new pane.
  * @param  {App} app
  * @param  {string} dest Basename of note to open to open
  * @param  {MouseEvent} event
- * @param  {{createNewFile:boolean}} [options={createNewFile:true}]
+ * @param  {{createNewFile:boolean}} [options={createNewFile:true}] Whether or not to create `dest` file if it doesn't exist. If `false`, simply return from the function.
  * @returns Promise
  */
 export declare function openOrSwitch(app: App, dest: string, event: MouseEvent, options?: {
