@@ -1,4 +1,4 @@
-## Advanced Cursors Changelog
+## Obsidian Community Lib Changelog
 
 ## [1.0.0](https://github.com/obsidian-community/obsidian-community-lib/compare/0.1.3...1.0.0) (2021-11-02)
 
