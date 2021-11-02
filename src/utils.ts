@@ -20,6 +20,7 @@ import {
   Vault,
   WorkspaceLeaf,
 } from "obsidian";
+import { ResolvedLinks } from "./interfaces";
 
 /**
  * You can await this Function to delay execution
@@ -219,11 +220,34 @@ export async function createNewMDNote(
 }
 
 /**
- * When clicking a link, check if that note is already open in another leaf, and switch to that leaf, if so. Otherwise, open the note in a new pane
+ * Add '.md' to a `noteName` if it isn't already there.
+ * @param  {string} noteName with or without '.md' on the end.
+ * @returns {string} noteName with '.md' on the end.
+ */
+export const addMD = (noteName: string): string => {
+  let withMD = noteName.slice();
+  if (!withMD.endsWith(".md")) {
+    withMD += ".md";
+  }
+  return withMD;
+};
+
+/**
+ * Strip '.md' off the end of a note name to get its basename.
+ *
+ * Works with the edgecase where a note has '.md' in its basename: `Obsidian.md.md`, for example.
+ * @param  {string} noteName with or without '.md' on the end.
+ * @returns {string} noteName without '.md'
+ */
+export const stripMD = (noteName: string): string =>
+  noteName.split(".md").slice(0, -1).join(".md");
+
+/**
+ * When clicking a link, check if that note is already open in another leaf, and switch to that leaf, if so. Otherwise, open the note in a new pane.
  * @param  {App} app
  * @param  {string} dest Basename of note to open to open
  * @param  {MouseEvent} event
- * @param  {{createNewFile:boolean}} [options={createNewFile:true}]
+ * @param  {{createNewFile:boolean}} [options={createNewFile:true}] Whether or not to create `dest` file if it doesn't exist. If `false`, simply return from the function.
  * @returns Promise
  */
 export async function openOrSwitch(
@@ -235,13 +259,13 @@ export async function openOrSwitch(
   } = { createNewFile: true }
 ): Promise<void> {
   const { workspace } = app;
-  const currFile = workspace.getActiveFile();
-  let destFile = app.metadataCache.getFirstLinkpathDest(dest, currFile.path);
+  const destStripped = stripMD(dest);
+  let destFile = app.metadataCache.getFirstLinkpathDest(destStripped, "");
 
   // If dest doesn't exist, make it
   if (!destFile) {
     if (options.createNewFile) {
-      destFile = await createNewMDNote(app, dest, currFile.path);
+      destFile = await createNewMDNote(app, destStripped);
     } else return;
   }
 
@@ -250,7 +274,7 @@ export async function openOrSwitch(
   // For all open leaves, if the leave's basename is equal to the link destination, rather activate that leaf instead of opening it in two panes
   workspace.iterateAllLeaves((leaf) => {
     if (leaf.view instanceof MarkdownView) {
-      if (leaf.view?.file?.basename === dest) {
+      if (leaf.view?.file?.basename === destStripped) {
         leavesWithDestAlreadyOpen.push(leaf);
       }
     }
@@ -271,11 +295,6 @@ export async function openOrSwitch(
   }
 }
 
-export interface ResolvedLinks {
-  [from: string]: {
-    [to: string]: number;
-  };
-}
 /**
  * Given a list of resolved links from app.metadataCache, check if `from` has a link to `to`
  * @param  {ResolvedLinks} resolvedLinks
@@ -368,54 +387,103 @@ export async function saveViewSide<YourPlugin extends Plugin>(
 }
 
 /**
- * A Modal used in {@link addChangelogButton} to display a changelog fetched from a provided url.
+ * A Modal used in {@link addRenderedMarkdownButton} to display rendered markdown from a raw string, or fetched from a provided url.
  *
  * ![](https://i.imgur.com/NMwM50E.png)
  * @param  {App} app
  * @param  {YourPlugin} plugin
- * @param  {string} url Where to find the raw markdown content of your changelog file
+ * @param  {string} source Raw markdown content or url to find raw markdown.
+ * @param  {boolean} fetch True → fetch markdown from `source` as url. False → `source` is already a markdown string.
  */
-export class ChangelogModal<YourPlugin extends Plugin> extends Modal {
+export class RenderedMarkdownModal<YourPlugin extends Plugin> extends Modal {
   plugin: YourPlugin;
-  url: string;
+  source: string;
+  fetch: boolean;
 
-  constructor(app: App, plugin: YourPlugin, url: string) {
+  constructor(app: App, plugin: YourPlugin, source: string, fetch: boolean) {
     super(app);
     this.plugin = plugin;
-    this.url = url;
+    this.source = source;
+    this.fetch = fetch;
   }
 
   async onOpen() {
-    let { contentEl, url, plugin } = this;
-    const changelog = await request({ url });
-    const logDiv = contentEl.createDiv();
-    MarkdownRenderer.renderMarkdown(changelog, logDiv, "", plugin);
+    let { contentEl, source, plugin, fetch } = this;
+    let content: string = source;
+    if (fetch) {
+      contentEl.createDiv({ text: `Waiting for content from: '${source}'` });
+      content = await request({ url: source });
+      contentEl.empty();
+    }
+    const logDiv = contentEl.createDiv({ cls: "OCL-RenderedMarkdownModal" });
+    MarkdownRenderer.renderMarkdown(content, logDiv, "", plugin);
   }
 
   onClose() {
     this.contentEl.empty();
   }
 }
+
 /**
- * Add a button to an HTMLELement, which, when clicked, pops up a {@link ChangelogModal} showing the changelog found at the `url` provided.
+ * Add a button to an HTMLELement, which, when clicked, pops up a {@link RenderedMarkdownModal} showing rendered markdown.
+ *
+ * Use `fetch` to indicate whether the markdown string needs to be fetched, or if it has been provided as a string already.
  *
  * ![](https://i.imgur.com/Hi4gyyv.png)
  * @param  {App} app
  * @param  {YourPlugin} plugin
  * @param  {HTMLElement} containerEl HTMLElement to add the button to
- * @param  {string} url Where to find the raw markdown content of your changelog file
- * @param  {string} [displayText="Changlog"] Text to display in the button
+ * @param  {string} source Raw markdown content or url to find raw markdown.
+ * @param  {boolean} fetch True → fetch markdown from `source` as url. False → `source` is already a markdown string.
+ * @param  {string} displayText Text to display in the button.
  */
-export function addChangelogButton<YourPlugin extends Plugin>(
+export function addRenderedMarkdownButton<YourPlugin extends Plugin>(
   app: App,
   plugin: YourPlugin,
   containerEl: HTMLElement,
-  url: string,
-  displayText: string = "Changlog"
+  source: string,
+  fetch: boolean,
+  displayText: string
 ) {
   containerEl.createEl("button", { text: displayText }, (but) =>
     but.onClickEvent(() => {
-      new ChangelogModal(app, plugin, url).open();
+      new RenderedMarkdownModal(app, plugin, source, fetch).open();
     })
   );
+}
+/**
+ * Check if `app.metadataCache.ResolvedLinks` have fully initalised.
+ *
+ * Used with {@link waitForResolvedLinks}.
+ * @param {App} app
+ * @param  {number} noFiles Number of files in your vault.
+ * @returns {boolean}
+ */
+export function resolvedLinksComplete(app: App, noFiles: number): boolean {
+  const { resolvedLinks } = app.metadataCache;
+  return Object.keys(resolvedLinks).length === noFiles;
+}
+
+/**
+ * Wait for `app.metadataCache.ResolvedLinks` to have fully initialised.
+ * @param {App} app
+ * @param  {number} [delay=1000] Number of milliseconds to wait between each check.
+ * @param {number} [max=50] Maximum number of iterations to check before throwing an error and breaking out of the loop.
+ */
+export async function waitForResolvedLinks(
+  app: App,
+  delay: number = 1000,
+  max: number = 50
+) {
+  const noFiles = app.vault.getMarkdownFiles().length;
+  let i = 0;
+  while (!resolvedLinksComplete(app, noFiles) && i < max) {
+    await wait(delay);
+    i++;
+  }
+  if (i === max) {
+    throw Error(
+      "Obsidian-Community-Lib: ResolvedLinks did not finish initialising. `max` iterations was reached first."
+    );
+  }
 }

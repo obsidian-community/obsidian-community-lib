@@ -1,4 +1,5 @@
 import { App, Constructor, Editor, ItemView, Modal, Plugin, TFile, Vault } from "obsidian";
+import { ResolvedLinks } from "./interfaces";
 /**
  * You can await this Function to delay execution
  *
@@ -93,21 +94,30 @@ export declare function hoverPreview<YourView extends ItemView>(event: MouseEven
  */
 export declare function createNewMDNote(app: App, newName: string, currFilePath?: string): Promise<TFile>;
 /**
- * When clicking a link, check if that note is already open in another leaf, and switch to that leaf, if so. Otherwise, open the note in a new pane
+ * Add '.md' to a `noteName` if it isn't already there.
+ * @param  {string} noteName with or without '.md' on the end.
+ * @returns {string} noteName with '.md' on the end.
+ */
+export declare const addMD: (noteName: string) => string;
+/**
+ * Strip '.md' off the end of a note name to get its basename.
+ *
+ * Works with the edgecase where a note has '.md' in its basename: `Obsidian.md.md`, for example.
+ * @param  {string} noteName with or without '.md' on the end.
+ * @returns {string} noteName without '.md'
+ */
+export declare const stripMD: (noteName: string) => string;
+/**
+ * When clicking a link, check if that note is already open in another leaf, and switch to that leaf, if so. Otherwise, open the note in a new pane.
  * @param  {App} app
  * @param  {string} dest Basename of note to open to open
  * @param  {MouseEvent} event
- * @param  {{createNewFile:boolean}} [options={createNewFile:true}]
+ * @param  {{createNewFile:boolean}} [options={createNewFile:true}] Whether or not to create `dest` file if it doesn't exist. If `false`, simply return from the function.
  * @returns Promise
  */
 export declare function openOrSwitch(app: App, dest: string, event: MouseEvent, options?: {
     createNewFile: boolean;
 }): Promise<void>;
-export interface ResolvedLinks {
-    [from: string]: {
-        [to: string]: number;
-    };
-}
 /**
  * Given a list of resolved links from app.metadataCache, check if `from` has a link to `to`
  * @param  {ResolvedLinks} resolvedLinks
@@ -137,28 +147,49 @@ export declare function openView<YourView extends ItemView>(app: App, viewType: 
  */
 export declare function saveViewSide<YourPlugin extends Plugin>(app: App, plugin: YourPlugin, viewType: string, settingName: string): Promise<"left" | "right">;
 /**
- * A Modal used in {@link addChangelogButton} to display a changelog fetched from a provided url.
+ * A Modal used in {@link addRenderedMarkdownButton} to display rendered markdown from a raw string, or fetched from a provided url.
  *
  * ![](https://i.imgur.com/NMwM50E.png)
  * @param  {App} app
  * @param  {YourPlugin} plugin
- * @param  {string} url Where to find the raw markdown content of your changelog file
+ * @param  {string} source Raw markdown content or url to find raw markdown.
+ * @param  {boolean} fetch True → fetch markdown from `source` as url. False → `source` is already a markdown string.
  */
-export declare class ChangelogModal<YourPlugin extends Plugin> extends Modal {
+export declare class RenderedMarkdownModal<YourPlugin extends Plugin> extends Modal {
     plugin: YourPlugin;
-    url: string;
-    constructor(app: App, plugin: YourPlugin, url: string);
+    source: string;
+    fetch: boolean;
+    constructor(app: App, plugin: YourPlugin, source: string, fetch: boolean);
     onOpen(): Promise<void>;
     onClose(): void;
 }
 /**
- * Add a button to an HTMLELement, which, when clicked, pops up a {@link ChangelogModal} showing the changelog found at the `url` provided.
+ * Add a button to an HTMLELement, which, when clicked, pops up a {@link RenderedMarkdownModal} showing rendered markdown.
+ *
+ * Use `fetch` to indicate whether the markdown string needs to be fetched, or if it has been provided as a string already.
  *
  * ![](https://i.imgur.com/Hi4gyyv.png)
  * @param  {App} app
  * @param  {YourPlugin} plugin
  * @param  {HTMLElement} containerEl HTMLElement to add the button to
- * @param  {string} url Where to find the raw markdown content of your changelog file
- * @param  {string} [displayText="Changlog"] Text to display in the button
+ * @param  {string} source Raw markdown content or url to find raw markdown.
+ * @param  {boolean} fetch True → fetch markdown from `source` as url. False → `source` is already a markdown string.
+ * @param  {string} displayText Text to display in the button.
  */
-export declare function addChangelogButton<YourPlugin extends Plugin>(app: App, plugin: YourPlugin, containerEl: HTMLElement, url: string, displayText?: string): void;
+export declare function addRenderedMarkdownButton<YourPlugin extends Plugin>(app: App, plugin: YourPlugin, containerEl: HTMLElement, source: string, fetch: boolean, displayText: string): void;
+/**
+ * Check if `app.metadataCache.ResolvedLinks` have fully initalised.
+ *
+ * Used with {@link waitForResolvedLinks}.
+ * @param {App} app
+ * @param  {number} noFiles Number of files in your vault.
+ * @returns {boolean}
+ */
+export declare function resolvedLinksComplete(app: App, noFiles: number): boolean;
+/**
+ * Wait for `app.metadataCache.ResolvedLinks` to have fully initialised.
+ * @param {App} app
+ * @param  {number} [delay=1000] Number of milliseconds to wait between each check.
+ * @param {number} [max=50] Maximum number of iterations to check before throwing an error and breaking out of the loop.
+ */
+export declare function waitForResolvedLinks(app: App, delay?: number, max?: number): Promise<void>;
