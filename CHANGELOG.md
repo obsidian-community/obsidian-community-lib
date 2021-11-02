@@ -16,8 +16,6 @@
 
 - :sparkles: Function: waitForResolvedLinks ([1e5e4df](https://github.com/obsidian-community/obsidian-community-lib/commit/1e5e4dffa2cf6361f8aade1bb949ea8cf41782ca))
 
-### Documentation
-
 ### [0.1.2](https://github.com/obsidian-community/obsidian-community-lib/compare/0.1.1...0.1.2) (2021-11-01)
 
 ### Features
@@ -27,8 +25,6 @@
 ### Bug Fixes
 
 - :bug: Fix [#17](https://github.com/obsidian-community/obsidian-community-lib/issues/17): openOrSwitch shouldn't need an open md note to work ([3fabd62](https://github.com/obsidian-community/obsidian-community-lib/commit/3fabd62d98f26a46b9d9726179966785296e2647))
-
-### Documentation
 
 ### [0.1.1](https://github.com/obsidian-community/obsidian-community-lib/compare/0.1.0...0.1.1) (2021-10-30)
 
@@ -44,8 +40,6 @@
 
 - :sparkles: Not necessary to pass in `to` to `hoverPreview` if the `event.target.innerText` is already the `linkText` ([5ce91cc](https://github.com/obsidian-community/obsidian-community-lib/commit/5ce91cc5a9e7c65b8bafebf06a1d752207dd21e6))
 - :sparkles: openView + saveViewSide ([6dc48c6](https://github.com/obsidian-community/obsidian-community-lib/commit/6dc48c6c123578a8bbd474231f68517f428ddbb2))
-
-### Documentation
 
 ### [0.0.19](https://github.com/SkepticMystic/obsidian-community-lib/compare/0.0.17...0.0.19) (2021-10-28)
 
