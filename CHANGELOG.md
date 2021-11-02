@@ -1,4 +1,17 @@
 ## Advanced Cursors Changelog
+## [1.0.0](https://github.com/obsidian-community/obsidian-community-lib/compare/0.1.3...1.0.0) (2021-11-02)
+
+
+### Features
+
+* :sparkles: Extend functionality of `RenderedMarkdownModal` ([08027ca](https://github.com/obsidian-community/obsidian-community-lib/commit/08027ca6970fe83d5d4a0ab615eca81b81b3f03e))
+
+
+### Documentation
+
+* :memo: RenderedMarkdownModal docs ([3c2ed65](https://github.com/obsidian-community/obsidian-community-lib/commit/3c2ed653a589c29b5809203f88163a86cac54fe2))
+* :memo: Update docs site ([cbb4fe2](https://github.com/obsidian-community/obsidian-community-lib/commit/cbb4fe2e013b44901dd241a24cd764bce7292cea))
+
 ### [0.1.3](https://github.com/obsidian-community/obsidian-community-lib/compare/0.1.2...0.1.3) (2021-11-01)
 
 
