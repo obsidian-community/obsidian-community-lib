@@ -1,4 +1,17 @@
-## Advanced Cursors Changelog
+## Obsidian Community Lib Changelog
+### [1.0.1](https://github.com/obsidian-community/obsidian-community-lib/compare/1.0.0...1.0.1) (2021-11-02)
+
+
+### Bug Fixes
+
+* :bug: Change `npm run docs` to a `chore` type, not `docs` ([1c4387a](https://github.com/obsidian-community/obsidian-community-lib/commit/1c4387a0a6d2b596dbe6e7eeb1deac50af3988a7))
+* :bug: hoverPreview doesn't work without `to` ([d8d1651](https://github.com/obsidian-community/obsidian-community-lib/commit/d8d1651b31ef74f367f331b3aae3885cbabdb67f))
+* :bug: Wrong package name in changelog! ([21d74a7](https://github.com/obsidian-community/obsidian-community-lib/commit/21d74a749a676a9cb2e5d0dce0afc52b23e5c253))
+
+
+### Documentation
+
+* :memo: Remove unused `Documentation` headers ([3ebe64a](https://github.com/obsidian-community/obsidian-community-lib/commit/3ebe64ac8d301747fc2d9202b1ee9ec9fe244e97))
 
 ## [1.0.0](https://github.com/obsidian-community/obsidian-community-lib/compare/0.1.3...1.0.0) (2021-11-02)
 
