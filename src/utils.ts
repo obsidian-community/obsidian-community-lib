@@ -176,24 +176,23 @@ export const isInVault = (
  * You probably have to hold down `Ctrl` when hovering the link for the preview to appear!
  * @param  {MouseEvent} event
  * @param  {YourView} view The view with the link being hovered
- * @param  {string} to The basename of the note to preview. Not necessary if the element being hovered has `to` as its `innerText`
+ * @param  {string} to The basename of the note to preview.
  * @template YourView The ViewType of your view
  * @returns void
  */
 export function hoverPreview<YourView extends ItemView>(
   event: MouseEvent,
   view: YourView,
-  to?: string
+  to: string
 ): void {
   const targetEl = event.target as HTMLElement;
-  const linkText = to ?? targetEl.innerText;
 
   view.app.workspace.trigger("hover-link", {
     event,
     source: view.getViewType(),
     hoverParent: view,
     targetEl,
-    linkText,
+    linktext: to,
   });
 }
 
