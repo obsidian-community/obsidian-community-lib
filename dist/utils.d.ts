@@ -80,11 +80,11 @@ export declare const isInVault: (app: App, noteName: string, sourcePath?: string
  * You probably have to hold down `Ctrl` when hovering the link for the preview to appear!
  * @param  {MouseEvent} event
  * @param  {YourView} view The view with the link being hovered
- * @param  {string} to The basename of the note to preview. Not necessary if the element being hovered has `to` as its `innerText`
+ * @param  {string} to The basename of the note to preview.
  * @template YourView The ViewType of your view
  * @returns void
  */
-export declare function hoverPreview<YourView extends ItemView>(event: MouseEvent, view: YourView, to?: string): void;
+export declare function hoverPreview<YourView extends ItemView>(event: MouseEvent, view: YourView, to: string): void;
 /**
  * Create a new markdown note named `newName` in the user's preffered new-note-folder.
  * @param  {App} app
