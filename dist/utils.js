@@ -1,6 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.waitForResolvedLinks = exports.resolvedLinksComplete = exports.addChangelogButton = exports.ChangelogModal = exports.saveViewSide = exports.openView = exports.linkedQ = exports.openOrSwitch = exports.stripMD = exports.addMD = exports.createNewMDNote = exports.hoverPreview = exports.isInVault = exports.getSelectionFromCurrFile = exports.getSelectionFromEditor = exports.copy = exports.getAvailablePathForAttachments = exports.base64ToArrayBuffer = exports.addFeatherIcon = exports.addAllFeatherIcons = exports.wait = void 0;
+exports.waitForResolvedLinks = exports.resolvedLinksComplete = exports.addRenderedMarkdownButton = exports.RenderedMarkdownModal = exports.saveViewSide = exports.openView = exports.linkedQ = exports.openOrSwitch = exports.stripMD = exports.addMD = exports.createNewMDNote = exports.hoverPreview = exports.isInVault = exports.getSelectionFromCurrFile = exports.getSelectionFromEditor = exports.copy = exports.getAvailablePathForAttachments = exports.base64ToArrayBuffer = exports.addFeatherIcon = exports.addAllFeatherIcons = exports.wait = void 0;
 /**
  * This module contains various utility functions commonly used in Obsidian plugins.
  * @module obsidian-community-lib
@@ -320,48 +320,56 @@ async function saveViewSide(app, plugin, viewType, settingName) {
 }
 exports.saveViewSide = saveViewSide;
 /**
- * A Modal used in {@link addChangelogButton} to display a changelog fetched from a provided url.
+ * A Modal used in {@link addRenderedMarkdownButton} to display rendered markdown from a raw string, or fetched from a provided url.
  *
  * ![](https://i.imgur.com/NMwM50E.png)
  * @param  {App} app
  * @param  {YourPlugin} plugin
- * @param  {string} url Where to find the raw markdown content of your changelog file
+ * @param  {string} source Raw markdown content or url to find raw markdown.
+ * @param  {boolean} fetch True → fetch markdown from `source` as url. False → `source` is already a markdown string.
  */
-class ChangelogModal extends obsidian_1.Modal {
-    constructor(app, plugin, url) {
+class RenderedMarkdownModal extends obsidian_1.Modal {
+    constructor(app, plugin, source, fetch) {
         super(app);
         this.plugin = plugin;
-        this.url = url;
+        this.source = source;
+        this.fetch = fetch;
     }
     async onOpen() {
-        let { contentEl, url, plugin } = this;
-        contentEl.createDiv({ text: `Waiting for content from ${url}` });
-        const changelog = await (0, obsidian_1.request)({ url });
-        contentEl.empty();
-        const logDiv = contentEl.createDiv();
-        obsidian_1.MarkdownRenderer.renderMarkdown(changelog, logDiv, "", plugin);
+        let { contentEl, source, plugin, fetch } = this;
+        let content = source;
+        if (fetch) {
+            contentEl.createDiv({ text: `Waiting for content from: '${source}'` });
+            content = await (0, obsidian_1.request)({ url: source });
+            contentEl.empty();
+        }
+        const logDiv = contentEl.createDiv({ cls: "OCL-RenderedMarkdownModal" });
+        obsidian_1.MarkdownRenderer.renderMarkdown(content, logDiv, "", plugin);
     }
     onClose() {
         this.contentEl.empty();
     }
 }
-exports.ChangelogModal = ChangelogModal;
+exports.RenderedMarkdownModal = RenderedMarkdownModal;
 /**
- * Add a button to an HTMLELement, which, when clicked, pops up a {@link ChangelogModal} showing the changelog found at the `url` provided.
+ * Add a button to an HTMLELement, which, when clicked, pops up a {@link RenderedMarkdownModal} showing rendered markdown.
+ *
+ * Use `fetch` to indicate whether the markdown string needs to be fetched, or if it has been provided as a string already.
  *
  * ![](https://i.imgur.com/Hi4gyyv.png)
  * @param  {App} app
  * @param  {YourPlugin} plugin
  * @param  {HTMLElement} containerEl HTMLElement to add the button to
- * @param  {string} url Where to find the raw markdown content of your changelog file
- * @param  {string} [displayText="Changlog"] Text to display in the button
+ * @param  {string} source Raw markdown content or url to find raw markdown.
+ * @param  {boolean} fetch True → fetch markdown from `source` as url. False → `source` is already a markdown string.
+ * @param  {string} displayText Text to display in the button.
  */
-function addChangelogButton(app, plugin, containerEl, url, displayText = "Changlog") {
+function addRenderedMarkdownButton(app, plugin, containerEl, source, fetch, displayText) {
     containerEl.createEl("button", { text: displayText }, (but) => but.onClickEvent(() => {
-        new ChangelogModal(app, plugin, url).open();
+        new RenderedMarkdownModal(app, plugin, source, fetch).open();
     }));
 }
-exports.addChangelogButton = addChangelogButton;
+exports.addRenderedMarkdownButton = addRenderedMarkdownButton;
 /**
  * Check if `app.metadataCache.ResolvedLinks` have fully initalised.
  *
