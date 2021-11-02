@@ -387,56 +387,67 @@ export async function saveViewSide<YourPlugin extends Plugin>(
 }
 
 /**
- * A Modal used in {@link addChangelogButton} to display a changelog fetched from a provided url.
+ * A Modal used in {@link addRenderedMarkdownButton} to display rendered markdown from a raw string, or fetched from a provided url.
  *
  * ![](https://i.imgur.com/NMwM50E.png)
  * @param  {App} app
  * @param  {YourPlugin} plugin
- * @param  {string} url Where to find the raw markdown content of your changelog file
+ * @param  {string} source Raw markdown content or url to find raw markdown.
+ * @param  {boolean} fetch True → fetch markdown from `source` as url. False → `source` is already a markdown string.
  */
-export class ChangelogModal<YourPlugin extends Plugin> extends Modal {
+export class RenderedMarkdownModal<YourPlugin extends Plugin> extends Modal {
   plugin: YourPlugin;
-  url: string;
+  source: string;
+  fetch: boolean;
 
-  constructor(app: App, plugin: YourPlugin, url: string) {
+  constructor(app: App, plugin: YourPlugin, source: string, fetch: boolean) {
     super(app);
     this.plugin = plugin;
-    this.url = url;
+    this.source = source;
+    this.fetch = fetch;
   }
 
   async onOpen() {
-    let { contentEl, url, plugin } = this;
-    contentEl.createDiv({ text: `Waiting for content from ${url}` });
-    const changelog = await request({ url });
-    contentEl.empty();
-    const logDiv = contentEl.createDiv();
-    MarkdownRenderer.renderMarkdown(changelog, logDiv, "", plugin);
+    let { contentEl, source, plugin, fetch } = this;
+    let content: string = source;
+    if (fetch) {
+      contentEl.createDiv({ text: `Waiting for content from: '${source}'` });
+      content = await request({ url: source });
+      contentEl.empty();
+    }
+    const logDiv = contentEl.createDiv({ cls: "OCL-RenderedMarkdownModal" });
+    MarkdownRenderer.renderMarkdown(content, logDiv, "", plugin);
   }
 
   onClose() {
     this.contentEl.empty();
   }
 }
+
 /**
- * Add a button to an HTMLELement, which, when clicked, pops up a {@link ChangelogModal} showing the changelog found at the `url` provided.
+ * Add a button to an HTMLELement, which, when clicked, pops up a {@link RenderedMarkdownModal} showing rendered markdown.
+ *
+ * Use `fetch` to indicate whether the markdown string needs to be fetched, or if it has been provided as a string already.
  *
  * ![](https://i.imgur.com/Hi4gyyv.png)
  * @param  {App} app
  * @param  {YourPlugin} plugin
  * @param  {HTMLElement} containerEl HTMLElement to add the button to
- * @param  {string} url Where to find the raw markdown content of your changelog file
- * @param  {string} [displayText="Changlog"] Text to display in the button
+ * @param  {string} source Raw markdown content or url to find raw markdown.
+ * @param  {boolean} fetch True → fetch markdown from `source` as url. False → `source` is already a markdown string.
+ * @param  {string} displayText Text to display in the button.
  */
-export function addChangelogButton<YourPlugin extends Plugin>(
+export function addRenderedMarkdownButton<YourPlugin extends Plugin>(
   app: App,
   plugin: YourPlugin,
   containerEl: HTMLElement,
-  url: string,
-  displayText: string = "Changlog"
+  source: string,
+  fetch: boolean,
+  displayText: string
 ) {
   containerEl.createEl("button", { text: displayText }, (but) =>
     but.onClickEvent(() => {
-      new ChangelogModal(app, plugin, url).open();
+      new RenderedMarkdownModal(app, plugin, source, fetch).open();
     })
   );
 }
