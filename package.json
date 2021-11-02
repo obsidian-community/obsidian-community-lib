@@ -10,7 +10,7 @@
     "scripts": {
         "test": "echo \"Error: no test specified\" && exit 1",
         "compile": "tsc && git commit -am \"chore: :package: Compile\"",
-        "docs": "npx typedoc ./src/utils.ts && git commit -am \"docs: :memo: Update docs site\"",
+        "docs": "npx typedoc ./src/utils.ts && git commit -am \"chore: :memo: Update docs site\"",
         "all": "npm run compile && npm run docs && npm run release",
         "release": "standard-version"
     },
