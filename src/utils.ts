@@ -321,6 +321,21 @@ export function linkedQ(
 }
 
 /**
+ * Check if the link `from` → `to` is resolved or not.
+ * @param  {App} app
+ * @param  {string} to
+ * @param  {string} from
+ * @returns boolean
+ */
+export function unresolvedQ(app: App, to: string, from: string): boolean {
+  const { unresolvedLinks } = app.metadataCache;
+  if (!unresolvedLinks[from]) {
+    return false;
+  }
+  return unresolvedLinks[from][to] > 0;
+}
+
+/**
  * Open your view on the chosen `side` if it isn't already open
  * @param  {App} app
  * @param  {string} viewType
