@@ -1,4 +1,11 @@
 ## Obsidian Community Lib Changelog
+### [1.0.2](https://github.com/obsidian-community/obsidian-community-lib/compare/1.0.1...1.0.2) (2021-11-04)
+
+
+### Bug Fixes
+
+* :bug: dropMD dropped in the wrong cases ([4f012b7](https://github.com/obsidian-community/obsidian-community-lib/commit/4f012b776d1aece5dd801f453efddc74976c2808))
+
 ### [1.0.1](https://github.com/obsidian-community/obsidian-community-lib/compare/1.0.0...1.0.1) (2021-11-02)
 
 
