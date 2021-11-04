@@ -125,7 +125,15 @@ export declare function openOrSwitch(app: App, dest: string, event: MouseEvent, 
  * @param  {string} to Note name with link arriving (With or without '.md')
  * @param {boolean} [directed=true] Only check if `from` has a link to `to`. If not directed, check in both directions
  */
-export declare function linkedQ(resolvedLinks: ResolvedLinks, from: string, to: string, directed?: boolean): boolean;
+export declare function isLinked(resolvedLinks: ResolvedLinks, from: string, to: string, directed?: boolean): boolean;
+/**
+ * Check if the link `from` → `to` is resolved or not.
+ * @param  {App} app
+ * @param  {string} to
+ * @param  {string} from
+ * @returns boolean
+ */
+export declare function isResolved(app: App, to: string, from: string): boolean;
 /**
  * Open your view on the chosen `side` if it isn't already open
  * @param  {App} app
