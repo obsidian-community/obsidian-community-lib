@@ -302,7 +302,7 @@ export async function openOrSwitch(
  * @param  {string} to Note name with link arriving (With or without '.md')
  * @param {boolean} [directed=true] Only check if `from` has a link to `to`. If not directed, check in both directions
  */
-export function linkedQ(
+export function isLinked(
   resolvedLinks: ResolvedLinks,
   from: string,
   to: string,
@@ -328,12 +328,9 @@ export function linkedQ(
  * @param  {string} from
  * @returns boolean
  */
-export function unresolvedQ(app: App, to: string, from: string): boolean {
-  const { unresolvedLinks } = app.metadataCache;
-  if (!unresolvedLinks[from]) {
-    return false;
-  }
-  return unresolvedLinks[from][to] > 0;
+export function isResolved(app: App, to: string, from: string): boolean {
+  const { resolvedLinks } = app.metadataCache;
+  return resolvedLinks?.[from]?.[to] > 0;
 }
 
 /**
