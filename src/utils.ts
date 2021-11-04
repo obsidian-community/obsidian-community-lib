@@ -238,8 +238,11 @@ export const addMD = (noteName: string): string => {
  * @param  {string} noteName with or without '.md' on the end.
  * @returns {string} noteName without '.md'
  */
-export const stripMD = (noteName: string): string =>
-  noteName.split(".md").slice(0, -1).join(".md");
+export const stripMD = (noteName: string): string => {
+  if (noteName.endsWith(".md")) {
+    return noteName.split(".md").slice(0, -1).join(".md");
+  } else return noteName;
+};
 
 /**
  * When clicking a link, check if that note is already open in another leaf, and switch to that leaf, if so. Otherwise, open the note in a new pane.
@@ -262,11 +265,9 @@ export async function openOrSwitch(
   let destFile = app.metadataCache.getFirstLinkpathDest(destStripped, "");
 
   // If dest doesn't exist, make it
-  if (!destFile) {
-    if (options.createNewFile) {
-      destFile = await createNewMDNote(app, destStripped);
-    } else return;
-  }
+  if (!destFile && options.createNewFile) {
+    destFile = await createNewMDNote(app, destStripped);
+  } else if (!destFile && options.createNewFile) return;
 
   // Check if it's already open
   const leavesWithDestAlreadyOpen: WorkspaceLeaf[] = [];
