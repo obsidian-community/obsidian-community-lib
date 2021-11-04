@@ -197,7 +197,13 @@ exports.addMD = addMD;
  * @param  {string} noteName with or without '.md' on the end.
  * @returns {string} noteName without '.md'
  */
-const stripMD = (noteName) => noteName.split(".md").slice(0, -1).join(".md");
+const stripMD = (noteName) => {
+    if (noteName.endsWith(".md")) {
+        return noteName.split(".md").slice(0, -1).join(".md");
+    }
+    else
+        return noteName;
+};
 exports.stripMD = stripMD;
 /**
  * When clicking a link, check if that note is already open in another leaf, and switch to that leaf, if so. Otherwise, open the note in a new pane.
@@ -212,13 +218,11 @@ async function openOrSwitch(app, dest, event, options = { createNewFile: true })
     const destStripped = (0, exports.stripMD)(dest);
     let destFile = app.metadataCache.getFirstLinkpathDest(destStripped, "");
     // If dest doesn't exist, make it
-    if (!destFile) {
-        if (options.createNewFile) {
-            destFile = await createNewMDNote(app, destStripped);
-        }
-        else
-            return;
+    if (!destFile && options.createNewFile) {
+        destFile = await createNewMDNote(app, destStripped);
     }
+    else if (!destFile && options.createNewFile)
+        return;
     // Check if it's already open
     const leavesWithDestAlreadyOpen = [];
     // For all open leaves, if the leave's basename is equal to the link destination, rather activate that leaf instead of opening it in two panes
