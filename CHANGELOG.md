@@ -1,4 +1,11 @@
 ## Obsidian Community Lib Changelog
+## [1.1.0](https://github.com/obsidian-community/obsidian-community-lib/compare/1.0.2...1.1.0) (2021-11-04)
+
+
+### Features
+
+* :sparkles: unresolvedQ ([5e6cf7e](https://github.com/obsidian-community/obsidian-community-lib/commit/5e6cf7ebc748f044ca32aefc8b32f241db48c5c1))
+
 ### [1.0.2](https://github.com/obsidian-community/obsidian-community-lib/compare/1.0.1...1.0.2) (2021-11-04)
 
 
