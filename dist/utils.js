@@ -1,6 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.waitForResolvedLinks = exports.resolvedLinksComplete = exports.addRenderedMarkdownButton = exports.RenderedMarkdownModal = exports.saveViewSide = exports.openView = exports.linkedQ = exports.openOrSwitch = exports.stripMD = exports.addMD = exports.createNewMDNote = exports.hoverPreview = exports.isInVault = exports.getSelectionFromCurrFile = exports.getSelectionFromEditor = exports.copy = exports.getAvailablePathForAttachments = exports.base64ToArrayBuffer = exports.addFeatherIcon = exports.addAllFeatherIcons = exports.wait = void 0;
+exports.waitForResolvedLinks = exports.resolvedLinksComplete = exports.addRenderedMarkdownButton = exports.RenderedMarkdownModal = exports.saveViewSide = exports.openView = exports.isResolved = exports.isLinked = exports.openOrSwitch = exports.stripMD = exports.addMD = exports.createNewMDNote = exports.hoverPreview = exports.isInVault = exports.getSelectionFromCurrFile = exports.getSelectionFromEditor = exports.copy = exports.getAvailablePathForAttachments = exports.base64ToArrayBuffer = exports.addFeatherIcon = exports.addAllFeatherIcons = exports.wait = void 0;
 /**
  * This module contains various utility functions commonly used in Obsidian plugins.
  * @module obsidian-community-lib
@@ -254,7 +254,7 @@ exports.openOrSwitch = openOrSwitch;
  * @param  {string} to Note name with link arriving (With or without '.md')
  * @param {boolean} [directed=true] Only check if `from` has a link to `to`. If not directed, check in both directions
  */
-function linkedQ(resolvedLinks, from, to, directed = true) {
+function isLinked(resolvedLinks, from, to, directed = true) {
     if (!from.endsWith(".md")) {
         from += ".md";
     }
@@ -269,7 +269,19 @@ function linkedQ(resolvedLinks, from, to, directed = true) {
     else
         return fromTo;
 }
-exports.linkedQ = linkedQ;
+exports.isLinked = isLinked;
+/**
+ * Check if the link `from` → `to` is resolved or not.
+ * @param  {App} app
+ * @param  {string} to
+ * @param  {string} from
+ * @returns boolean
+ */
+function isResolved(app, to, from) {
+    const { resolvedLinks } = app.metadataCache;
+    return resolvedLinks?.[from]?.[to] > 0;
+}
+exports.isResolved = isResolved;
 /**
  * Open your view on the chosen `side` if it isn't already open
  * @param  {App} app
