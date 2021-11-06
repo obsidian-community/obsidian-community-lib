@@ -3,12 +3,9 @@
     "module": "ESNext",
     "lib": [
       "dom",
-      "es5",
-      "scripthost",
-      "es2015",
-      "es2017.object"
+      "es2018"
     ],
-    "target": "ES6",
+    "target": "ES2018",
     "declaration": true,
     "outDir": "./dist",
     "moduleResolution": "Node"
