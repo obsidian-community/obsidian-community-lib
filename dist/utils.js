@@ -1,34 +1,29 @@
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.waitForResolvedLinks = exports.resolvedLinksComplete = exports.addRenderedMarkdownButton = exports.RenderedMarkdownModal = exports.saveViewSide = exports.openView = exports.isResolved = exports.isLinked = exports.openOrSwitch = exports.stripMD = exports.addMD = exports.createNewMDNote = exports.hoverPreview = exports.isInVault = exports.getSelectionFromCurrFile = exports.getSelectionFromEditor = exports.copy = exports.getAvailablePathForAttachments = exports.base64ToArrayBuffer = exports.addFeatherIcon = exports.addAllFeatherIcons = exports.wait = void 0;
 /**
  * This module contains various utility functions commonly used in Obsidian plugins.
  * @module obsidian-community-lib
  */
-const feather = require("feather-icons");
-const obsidian_1 = require("obsidian");
+import * as feather from "feather-icons";
+import { addIcon, MarkdownRenderer, MarkdownView, Modal, normalizePath, Notice, request, TFile, } from "obsidian";
 /**
  * You can await this Function to delay execution
  *
  * @param delay The delay in ms
  */
-async function wait(delay) {
+export async function wait(delay) {
     return new Promise((resolve) => setTimeout(resolve, delay));
 }
-exports.wait = wait;
 /**
  * Adds all official Feather Icons to Obsidian.
  * https://feathericons.com/
  *
  * @param attr SVG Attributes for the Icon. The default should work for most usecases.
  */
-function addAllFeatherIcons(attr = { viewBox: "0 0 24 24", width: "100", height: "100" }) {
+export function addAllFeatherIcons(attr = { viewBox: "0 0 24 24", width: "100", height: "100" }) {
     Object.values(feather.icons).forEach((i) => {
         const svg = i.toSvg(attr);
-        (0, obsidian_1.addIcon)(`feather-${i.name}`, svg);
+        addIcon(`feather-${i.name}`, svg);
     });
 }
-exports.addAllFeatherIcons = addAllFeatherIcons;
 /**
  * Adds a specific Feather Icon to Obsidian.
  *
@@ -36,17 +31,16 @@ exports.addAllFeatherIcons = addAllFeatherIcons;
  * @param attr SVG Attributes for the Icon. The default should work for most usecases.
  * @returns {string} Icon name
  */
-function addFeatherIcon(name, attr = { viewBox: "0 0 24 24", width: "100", height: "100" }) {
+export function addFeatherIcon(name, attr = { viewBox: "0 0 24 24", width: "100", height: "100" }) {
     if (feather.icons[name]) {
         const iconName = `feather-${name}`;
-        (0, obsidian_1.addIcon)(iconName, feather.icons[name].toSvg(attr));
+        addIcon(iconName, feather.icons[name].toSvg(attr));
         return iconName;
     }
     else {
         throw Error(`This Icon (${name}) doesn't exist in the Feather Library.`);
     }
 }
-exports.addFeatherIcon = addFeatherIcon;
 /**
  * Convert a base64 String to an ArrayBuffer.
  * You can then use the ArrayBuffer to save the asset to disk.
@@ -54,7 +48,7 @@ exports.addFeatherIcon = addFeatherIcon;
  * @param base64 base64 string to be converted.
  * @returns ArrayBuffer
  */
-function base64ToArrayBuffer(base64) {
+export function base64ToArrayBuffer(base64) {
     const binary_string = window.atob(base64);
     const len = binary_string.length;
     let bytes = new Uint8Array(len);
@@ -63,7 +57,6 @@ function base64ToArrayBuffer(base64) {
     }
     return bytes.buffer;
 }
-exports.base64ToArrayBuffer = base64ToArrayBuffer;
 /**
  * This is a helper method for an undocumented API of Obsidian.
  *
@@ -73,11 +66,10 @@ exports.base64ToArrayBuffer = base64ToArrayBuffer;
  * @param sourceFile The Sourcefile from where the Attachment gets added, this is needed because the Attachment Folder might be different based on where it gets inserted.
  * @returns The Attachment Path
  */
-function getAvailablePathForAttachments(vault, fileName, format, sourceFile) {
+export function getAvailablePathForAttachments(vault, fileName, format, sourceFile) {
     //@ts-expect-error
     return vault.getAvailablePathForAttachments(fileName, format, sourceFile);
 }
-exports.getAvailablePathForAttachments = getAvailablePathForAttachments;
 /**
  * Copy `content` to the users clipboard.
  *
@@ -85,18 +77,17 @@ exports.getAvailablePathForAttachments = getAvailablePathForAttachments;
  * @param {() => any} success The callback to run when text is successfully copied. Default throws a new `Notice`
  * @param {(reason?) => any} failure The callback to run when text was not able to be copied. Default throws a new `Notice`, and console logs the error.`
  */
-async function copy(content, success = () => new obsidian_1.Notice("Copied to clipboard"), failure = (reason) => {
-    new obsidian_1.Notice("Could not copy to clipboard");
+export async function copy(content, success = () => new Notice("Copied to clipboard"), failure = (reason) => {
+    new Notice("Could not copy to clipboard");
     console.log({ reason });
 }) {
     await navigator.clipboard.writeText(content).then(success, failure);
 }
-exports.copy = copy;
 /**
  * Given an editor, check if something is selected and return that selection, otherwise return the entire content of the editor
  * @param  {Editor} editor
  */
-function getSelectionFromEditor(editor) {
+export function getSelectionFromEditor(editor) {
     if (editor.somethingSelected()) {
         return editor.getSelection();
     }
@@ -104,20 +95,20 @@ function getSelectionFromEditor(editor) {
         return editor.getValue();
     }
 }
-exports.getSelectionFromEditor = getSelectionFromEditor;
 /**
  * Check if something is selected in the current file and return that selection, otherwise return the entire content of the current file.
  * @param  {App} app
  * @param  {boolean} [cached=true] Use `cachedRead` or `read`. `cachedRead` by default.
  */
-async function getSelectionFromCurrFile(app, cached = true) {
-    const text = window?.getSelection()?.toString();
+export async function getSelectionFromCurrFile(app, cached = true) {
+    var _a;
+    const text = (_a = window === null || window === void 0 ? void 0 : window.getSelection()) === null || _a === void 0 ? void 0 : _a.toString();
     if (text) {
         return text;
     }
     else {
         const currFile = app.workspace.getActiveFile();
-        if (currFile instanceof obsidian_1.TFile) {
+        if (currFile instanceof TFile) {
             if (cached) {
                 return await app.vault.cachedRead(currFile);
             }
@@ -126,11 +117,10 @@ async function getSelectionFromCurrFile(app, cached = true) {
             }
         }
         else {
-            new obsidian_1.Notice("You must be focused on a markdown file.");
+            new Notice("You must be focused on a markdown file.");
         }
     }
 }
-exports.getSelectionFromCurrFile = getSelectionFromCurrFile;
 /**
  * Check if `noteName` is the name of a note that exists in the vault.
  * @param  {App} app
@@ -138,8 +128,7 @@ exports.getSelectionFromCurrFile = getSelectionFromCurrFile;
  * @param  {string} [sourcePath=""] Optional file path to start searching from. Default is the current file.
  * @returns boolean
  */
-const isInVault = (app, noteName, sourcePath = "") => !!app.metadataCache.getFirstLinkpathDest(noteName, sourcePath);
-exports.isInVault = isInVault;
+export const isInVault = (app, noteName, sourcePath = "") => !!app.metadataCache.getFirstLinkpathDest(noteName, sourcePath);
 /**
  * When hovering a link going to `to`, show the Obsidian hover-preview of that note.
  *
@@ -150,7 +139,7 @@ exports.isInVault = isInVault;
  * @template YourView The ViewType of your view
  * @returns void
  */
-function hoverPreview(event, view, to) {
+export function hoverPreview(event, view, to) {
     const targetEl = event.target;
     view.app.workspace.trigger("hover-link", {
         event,
@@ -160,7 +149,6 @@ function hoverPreview(event, view, to) {
         linktext: to,
     });
 }
-exports.hoverPreview = hoverPreview;
 /**
  * Create a new markdown note named `newName` in the user's preffered new-note-folder.
  * @param  {App} app
@@ -168,28 +156,23 @@ exports.hoverPreview = hoverPreview;
  * @param  {string} [currFilePath=""] File path of the current note. Use an empty string if there is no active file.
  * @returns {Promise<TFile>} new TFile
  */
-async function createNewMDNote(app, newName, currFilePath = "") {
+export async function createNewMDNote(app, newName, currFilePath = "") {
     const newFileFolder = app.fileManager.getNewFileParent(currFilePath).path;
-    if (!newName.endsWith(".md")) {
-        newName += ".md";
-    }
-    const newFilePath = (0, obsidian_1.normalizePath)(`${newFileFolder}${newFileFolder === "/" ? "" : "/"}${newName}.md`);
+    const newFilePath = normalizePath(`${newFileFolder}${newFileFolder === "/" ? "" : "/"}${addMD(newName)}`);
     return await app.vault.create(newFilePath, "");
 }
-exports.createNewMDNote = createNewMDNote;
 /**
  * Add '.md' to a `noteName` if it isn't already there.
  * @param  {string} noteName with or without '.md' on the end.
  * @returns {string} noteName with '.md' on the end.
  */
-const addMD = (noteName) => {
+export const addMD = (noteName) => {
     let withMD = noteName.slice();
     if (!withMD.endsWith(".md")) {
         withMD += ".md";
     }
     return withMD;
 };
-exports.addMD = addMD;
 /**
  * Strip '.md' off the end of a note name to get its basename.
  *
@@ -197,14 +180,13 @@ exports.addMD = addMD;
  * @param  {string} noteName with or without '.md' on the end.
  * @returns {string} noteName without '.md'
  */
-const stripMD = (noteName) => {
+export const stripMD = (noteName) => {
     if (noteName.endsWith(".md")) {
         return noteName.split(".md").slice(0, -1).join(".md");
     }
     else
         return noteName;
 };
-exports.stripMD = stripMD;
 /**
  * When clicking a link, check if that note is already open in another leaf, and switch to that leaf, if so. Otherwise, open the note in a new pane.
  * @param  {App} app
@@ -213,9 +195,9 @@ exports.stripMD = stripMD;
  * @param  {{createNewFile:boolean}} [options={createNewFile:true}] Whether or not to create `dest` file if it doesn't exist. If `false`, simply return from the function.
  * @returns Promise
  */
-async function openOrSwitch(app, dest, event, options = { createNewFile: true }) {
+export async function openOrSwitch(app, dest, event, options = { createNewFile: true }) {
     const { workspace } = app;
-    const destStripped = (0, exports.stripMD)(dest);
+    const destStripped = stripMD(dest);
     let destFile = app.metadataCache.getFirstLinkpathDest(destStripped, "");
     // If dest doesn't exist, make it
     if (!destFile && options.createNewFile) {
@@ -227,8 +209,9 @@ async function openOrSwitch(app, dest, event, options = { createNewFile: true })
     const leavesWithDestAlreadyOpen = [];
     // For all open leaves, if the leave's basename is equal to the link destination, rather activate that leaf instead of opening it in two panes
     workspace.iterateAllLeaves((leaf) => {
-        if (leaf.view instanceof obsidian_1.MarkdownView) {
-            if (leaf.view?.file?.basename === destStripped) {
+        var _a, _b;
+        if (leaf.view instanceof MarkdownView) {
+            if (((_b = (_a = leaf.view) === null || _a === void 0 ? void 0 : _a.file) === null || _b === void 0 ? void 0 : _b.basename) === destStripped) {
                 leavesWithDestAlreadyOpen.push(leaf);
             }
         }
@@ -246,7 +229,6 @@ async function openOrSwitch(app, dest, event, options = { createNewFile: true })
         await leaf.openFile(destFile, { active: true, mode });
     }
 }
-exports.openOrSwitch = openOrSwitch;
 /**
  * Given a list of resolved links from app.metadataCache, check if `from` has a link to `to`
  * @param  {ResolvedLinks} resolvedLinks
@@ -254,22 +236,22 @@ exports.openOrSwitch = openOrSwitch;
  * @param  {string} to Note name with link arriving (With or without '.md')
  * @param {boolean} [directed=true] Only check if `from` has a link to `to`. If not directed, check in both directions
  */
-function isLinked(resolvedLinks, from, to, directed = true) {
+export function isLinked(resolvedLinks, from, to, directed = true) {
+    var _a, _b;
     if (!from.endsWith(".md")) {
         from += ".md";
     }
     if (!to.endsWith(".md")) {
         to += ".md";
     }
-    const fromTo = resolvedLinks[from]?.hasOwnProperty(to);
+    const fromTo = (_a = resolvedLinks[from]) === null || _a === void 0 ? void 0 : _a.hasOwnProperty(to);
     if (!fromTo && !directed) {
-        const toFrom = resolvedLinks[to]?.hasOwnProperty(from);
+        const toFrom = (_b = resolvedLinks[to]) === null || _b === void 0 ? void 0 : _b.hasOwnProperty(from);
         return toFrom;
     }
     else
         return fromTo;
 }
-exports.isLinked = isLinked;
 /**
  * Check if the link `from` → `to` is resolved or not.
  * @param  {App} app
@@ -277,11 +259,11 @@ exports.isLinked = isLinked;
  * @param  {string} from
  * @returns boolean
  */
-function isResolved(app, to, from) {
+export function isResolved(app, to, from) {
+    var _a;
     const { resolvedLinks } = app.metadataCache;
-    return resolvedLinks?.[from]?.[to] > 0;
+    return ((_a = resolvedLinks === null || resolvedLinks === void 0 ? void 0 : resolvedLinks[from]) === null || _a === void 0 ? void 0 : _a[to]) > 0;
 }
-exports.isResolved = isResolved;
 /**
  * Open your view on the chosen `side` if it isn't already open
  * @param  {App} app
@@ -290,7 +272,7 @@ exports.isResolved = isResolved;
  * @param  {"left"|"right"} [side="right"]
  * @returns {Promise<void>}
  */
-async function openView(app, viewType, viewClass, side = "right") {
+export async function openView(app, viewType, viewClass, side = "right") {
     let leaf = null;
     for (leaf of app.workspace.getLeavesOfType(viewType)) {
         if (leaf.view instanceof viewClass) {
@@ -300,7 +282,7 @@ async function openView(app, viewType, viewClass, side = "right") {
         break;
     }
     leaf =
-        leaf ?? side === "right"
+        (leaf !== null && leaf !== void 0 ? leaf : side === "right")
             ? app.workspace.getRightLeaf(false)
             : app.workspace.getLeftLeaf(false);
     leaf.setViewState({
@@ -308,7 +290,6 @@ async function openView(app, viewType, viewClass, side = "right") {
         active: true,
     });
 }
-exports.openView = openView;
 /**
  * Check which side of the workspace your `viewType` is on, and save it into `plugin.settings[settingName]`.
  *
@@ -319,7 +300,7 @@ exports.openView = openView;
  * @param  {string} settingName
  * @returns {"left" | "right"} `side`
  */
-async function saveViewSide(app, plugin, viewType, settingName) {
+export async function saveViewSide(app, plugin, viewType, settingName) {
     const leaf = app.workspace.getLeavesOfType(viewType)[0];
     if (!leaf) {
         console.info(`Obsidian-Community-Lib: No instance of '${viewType}' open, cannot save side`);
@@ -333,7 +314,6 @@ async function saveViewSide(app, plugin, viewType, settingName) {
     await plugin.saveSettings();
     return side;
 }
-exports.saveViewSide = saveViewSide;
 /**
  * A Modal used in {@link addRenderedMarkdownButton} to display rendered markdown from a raw string, or fetched from a provided url.
  *
@@ -343,7 +323,7 @@ exports.saveViewSide = saveViewSide;
  * @param  {string} source Raw markdown content or url to find raw markdown.
  * @param  {boolean} fetch True → fetch markdown from `source` as url. False → `source` is already a markdown string.
  */
-class RenderedMarkdownModal extends obsidian_1.Modal {
+export class RenderedMarkdownModal extends Modal {
     constructor(app, plugin, source, fetch) {
         super(app);
         this.plugin = plugin;
@@ -355,17 +335,16 @@ class RenderedMarkdownModal extends obsidian_1.Modal {
         let content = source;
         if (fetch) {
             contentEl.createDiv({ text: `Waiting for content from: '${source}'` });
-            content = await (0, obsidian_1.request)({ url: source });
+            content = await request({ url: source });
             contentEl.empty();
         }
         const logDiv = contentEl.createDiv({ cls: "OCL-RenderedMarkdownModal" });
-        obsidian_1.MarkdownRenderer.renderMarkdown(content, logDiv, "", plugin);
+        MarkdownRenderer.renderMarkdown(content, logDiv, "", plugin);
     }
     onClose() {
         this.contentEl.empty();
     }
 }
-exports.RenderedMarkdownModal = RenderedMarkdownModal;
 /**
  * Add a button to an HTMLELement, which, when clicked, pops up a {@link RenderedMarkdownModal} showing rendered markdown.
  *
@@ -379,12 +358,11 @@ exports.RenderedMarkdownModal = RenderedMarkdownModal;
  * @param  {boolean} fetch True → fetch markdown from `source` as url. False → `source` is already a markdown string.
  * @param  {string} displayText Text to display in the button.
  */
-function addRenderedMarkdownButton(app, plugin, containerEl, source, fetch, displayText) {
+export function addRenderedMarkdownButton(app, plugin, containerEl, source, fetch, displayText) {
     containerEl.createEl("button", { text: displayText }, (but) => but.onClickEvent(() => {
         new RenderedMarkdownModal(app, plugin, source, fetch).open();
     }));
 }
-exports.addRenderedMarkdownButton = addRenderedMarkdownButton;
 /**
  * Check if `app.metadataCache.ResolvedLinks` have fully initalised.
  *
@@ -393,18 +371,17 @@ exports.addRenderedMarkdownButton = addRenderedMarkdownButton;
  * @param  {number} noFiles Number of files in your vault.
  * @returns {boolean}
  */
-function resolvedLinksComplete(app, noFiles) {
+export function resolvedLinksComplete(app, noFiles) {
     const { resolvedLinks } = app.metadataCache;
     return Object.keys(resolvedLinks).length === noFiles;
 }
-exports.resolvedLinksComplete = resolvedLinksComplete;
 /**
  * Wait for `app.metadataCache.ResolvedLinks` to have fully initialised.
  * @param {App} app
  * @param  {number} [delay=1000] Number of milliseconds to wait between each check.
  * @param {number} [max=50] Maximum number of iterations to check before throwing an error and breaking out of the loop.
  */
-async function waitForResolvedLinks(app, delay = 1000, max = 50) {
+export async function waitForResolvedLinks(app, delay = 1000, max = 50) {
     const noFiles = app.vault.getMarkdownFiles().length;
     let i = 0;
     while (!resolvedLinksComplete(app, noFiles) && i < max) {
@@ -415,4 +392,3 @@ async function waitForResolvedLinks(app, delay = 1000, max = 50) {
         throw Error("Obsidian-Community-Lib: ResolvedLinks did not finish initialising. `max` iterations was reached first.");
     }
 }
-exports.waitForResolvedLinks = waitForResolvedLinks;
