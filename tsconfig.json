@@ -1,9 +1,14 @@
 {
   "compilerOptions": {
-    "module": "commonjs",
-    "target": "es2020",
+    "module": "ESNext",
+    "lib": [
+      "dom",
+      "es2018"
+    ],
+    "target": "ES2018",
     "declaration": true,
-    "outDir": "./dist"
+    "outDir": "./dist",
+    "moduleResolution": "Node"
   },
   "include": ["src/**/*"]
 }
