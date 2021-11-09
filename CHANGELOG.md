@@ -1,4 +1,11 @@
 ## Obsidian Community Lib Changelog
+### [1.1.1](https://github.com/obsidian-community/obsidian-community-lib/compare/1.1.0...1.1.1) (2021-11-09)
+
+
+### Bug Fixes
+
+* :bug: Was adding'.md' to new files twice ([f97ccf6](https://github.com/obsidian-community/obsidian-community-lib/commit/f97ccf696989ac133e081665de13a8c3de230c35))
+
 ## [1.1.0](https://github.com/obsidian-community/obsidian-community-lib/compare/1.0.2...1.1.0) (2021-11-04)
 
 
