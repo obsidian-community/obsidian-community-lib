@@ -209,11 +209,8 @@ export async function createNewMDNote(
   currFilePath: string = ""
 ): Promise<TFile> {
   const newFileFolder = app.fileManager.getNewFileParent(currFilePath).path;
-  if (!newName.endsWith(".md")) {
-    newName += ".md";
-  }
   const newFilePath = normalizePath(
-    `${newFileFolder}${newFileFolder === "/" ? "" : "/"}${newName}.md`
+    `${newFileFolder}${newFileFolder === "/" ? "" : "/"}${addMD(newName)}`
   );
   return await app.vault.create(newFilePath, "");
 }
