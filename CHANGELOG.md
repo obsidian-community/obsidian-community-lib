@@ -1,4 +1,16 @@
 ## Obsidian Community Lib Changelog
+## [1.2.0](https://github.com/obsidian-community/obsidian-community-lib/compare/1.1.1...1.2.0) (2021-11-12)
+
+
+### Features
+
+* :sparkles: openView returns opened view ([07eeede](https://github.com/obsidian-community/obsidian-community-lib/commit/07eeede6fc81250f38335b4dac0ac63aacc39d7a))
+
+
+### Bug Fixes
+
+* :bug: openOrSwitch incorrect logic checking if user wants to createNewFile ([4c3040c](https://github.com/obsidian-community/obsidian-community-lib/commit/4c3040cdaab4185752d09ced4765891b020df58c))
+
 ### [1.1.1](https://github.com/obsidian-community/obsidian-community-lib/compare/1.1.0...1.1.1) (2021-11-09)
 
 
