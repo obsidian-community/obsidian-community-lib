@@ -110,7 +110,7 @@ export declare const stripMD: (noteName: string) => string;
 /**
  * When clicking a link, check if that note is already open in another leaf, and switch to that leaf, if so. Otherwise, open the note in a new pane.
  * @param  {App} app
- * @param  {string} dest Basename of note to open to open
+ * @param  {string} dest Basename of note to open
  * @param  {MouseEvent} event
  * @param  {{createNewFile:boolean}} [options={createNewFile:true}] Whether or not to create `dest` file if it doesn't exist. If `false`, simply return from the function.
  * @returns Promise
@@ -140,9 +140,9 @@ export declare function isResolved(app: App, to: string, from: string): boolean;
  * @param  {string} viewType
  * @param  {Constructor<YourView>} viewClass The class constructor of your view
  * @param  {"left"|"right"} [side="right"]
- * @returns {Promise<void>}
+ * @returns {Promise<YourView>} The opened view
  */
-export declare function openView<YourView extends ItemView>(app: App, viewType: string, viewClass: Constructor<YourView>, side?: "left" | "right"): Promise<void>;
+export declare function openView<YourView extends ItemView>(app: App, viewType: string, viewClass: Constructor<YourView>, side?: "left" | "right"): Promise<YourView>;
 /**
  * Check which side of the workspace your `viewType` is on, and save it into `plugin.settings[settingName]`.
  *
