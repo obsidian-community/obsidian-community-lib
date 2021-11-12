@@ -190,7 +190,7 @@ export const stripMD = (noteName) => {
 /**
  * When clicking a link, check if that note is already open in another leaf, and switch to that leaf, if so. Otherwise, open the note in a new pane.
  * @param  {App} app
- * @param  {string} dest Basename of note to open to open
+ * @param  {string} dest Basename of note to open
  * @param  {MouseEvent} event
  * @param  {{createNewFile:boolean}} [options={createNewFile:true}] Whether or not to create `dest` file if it doesn't exist. If `false`, simply return from the function.
  * @returns Promise
@@ -203,7 +203,7 @@ export async function openOrSwitch(app, dest, event, options = { createNewFile: 
     if (!destFile && options.createNewFile) {
         destFile = await createNewMDNote(app, destStripped);
     }
-    else if (!destFile && options.createNewFile)
+    else if (!destFile && !options.createNewFile)
         return;
     // Check if it's already open
     const leavesWithDestAlreadyOpen = [];
@@ -270,13 +270,13 @@ export function isResolved(app, to, from) {
  * @param  {string} viewType
  * @param  {Constructor<YourView>} viewClass The class constructor of your view
  * @param  {"left"|"right"} [side="right"]
- * @returns {Promise<void>}
+ * @returns {Promise<YourView>} The opened view
  */
 export async function openView(app, viewType, viewClass, side = "right") {
     let leaf = null;
     for (leaf of app.workspace.getLeavesOfType(viewType)) {
         if (leaf.view instanceof viewClass) {
-            return;
+            return leaf.view;
         }
         await leaf.setViewState({ type: "empty" });
         break;
@@ -285,10 +285,11 @@ export async function openView(app, viewType, viewClass, side = "right") {
         (leaf !== null && leaf !== void 0 ? leaf : side === "right")
             ? app.workspace.getRightLeaf(false)
             : app.workspace.getLeftLeaf(false);
-    leaf.setViewState({
+    await leaf.setViewState({
         type: viewType,
         active: true,
     });
+    return leaf.view;
 }
 /**
  * Check which side of the workspace your `viewType` is on, and save it into `plugin.settings[settingName]`.
