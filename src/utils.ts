@@ -336,18 +336,18 @@ export function isResolved(app: App, to: string, from: string): boolean {
  * @param  {string} viewType
  * @param  {Constructor<YourView>} viewClass The class constructor of your view
  * @param  {"left"|"right"} [side="right"]
- * @returns {Promise<void>}
+ * @returns {Promise<YourView>} The opened view
  */
 export async function openView<YourView extends ItemView>(
   app: App,
   viewType: string,
   viewClass: Constructor<YourView>,
   side: "left" | "right" = "right"
-): Promise<void> {
+): Promise<YourView> {
   let leaf: WorkspaceLeaf = null;
   for (leaf of app.workspace.getLeavesOfType(viewType)) {
     if (leaf.view instanceof viewClass) {
-      return;
+      return leaf.view;
     }
     await leaf.setViewState({ type: "empty" });
     break;
@@ -358,10 +358,12 @@ export async function openView<YourView extends ItemView>(
       ? app.workspace.getRightLeaf(false)
       : app.workspace.getLeftLeaf(false);
 
-  leaf.setViewState({
+  await leaf.setViewState({
     type: viewType,
     active: true,
   });
+
+  return leaf.view as YourView;
 }
 /**
  * Check which side of the workspace your `viewType` is on, and save it into `plugin.settings[settingName]`.
