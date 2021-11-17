@@ -1,4 +1,16 @@
 ## Obsidian Community Lib Changelog
+## [1.3.0](https://github.com/obsidian-community/obsidian-community-lib/compare/1.2.0...1.3.0) (2021-11-17)
+
+
+### Features
+
+* :sparkles: openOrSwitch all file extensions ([1c8c6ea](https://github.com/obsidian-community/obsidian-community-lib/commit/1c8c6eafd772158ba118137be43cb8b667c5bf48))
+
+
+### Bug Fixes
+
+* :bug: addMD to noteName when checking if isResolved ([3e37f66](https://github.com/obsidian-community/obsidian-community-lib/commit/3e37f66a4a65433324f848170e455306cce5f15a))
+
 ## [1.2.0](https://github.com/obsidian-community/obsidian-community-lib/compare/1.1.1...1.2.0) (2021-11-12)
 
 

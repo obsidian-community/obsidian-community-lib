@@ -162,16 +162,12 @@ export async function createNewMDNote(app, newName, currFilePath = "") {
     return await app.vault.create(newFilePath, "");
 }
 /**
- * Add '.md' to a `noteName` if it isn't already there.
+ * Add '.md' to `noteName` if it isn't already there.
  * @param  {string} noteName with or without '.md' on the end.
  * @returns {string} noteName with '.md' on the end.
  */
 export const addMD = (noteName) => {
-    let withMD = noteName.slice();
-    if (!withMD.endsWith(".md")) {
-        withMD += ".md";
-    }
-    return withMD;
+    return noteName.endsWith(".md") ? noteName : noteName + ".md";
 };
 /**
  * Strip '.md' off the end of a note name to get its basename.
@@ -190,18 +186,17 @@ export const stripMD = (noteName) => {
 /**
  * When clicking a link, check if that note is already open in another leaf, and switch to that leaf, if so. Otherwise, open the note in a new pane.
  * @param  {App} app
- * @param  {string} dest Basename of note to open
+ * @param  {string} dest Name of note to open. If you want to open a non-md note, be sure to add the file extension.
  * @param  {MouseEvent} event
  * @param  {{createNewFile:boolean}} [options={createNewFile:true}] Whether or not to create `dest` file if it doesn't exist. If `false`, simply return from the function.
  * @returns Promise
  */
 export async function openOrSwitch(app, dest, event, options = { createNewFile: true }) {
     const { workspace } = app;
-    const destStripped = stripMD(dest);
-    let destFile = app.metadataCache.getFirstLinkpathDest(destStripped, "");
+    let destFile = app.metadataCache.getFirstLinkpathDest(dest, "");
     // If dest doesn't exist, make it
     if (!destFile && options.createNewFile) {
-        destFile = await createNewMDNote(app, destStripped);
+        destFile = await createNewMDNote(app, dest);
     }
     else if (!destFile && !options.createNewFile)
         return;
@@ -209,9 +204,10 @@ export async function openOrSwitch(app, dest, event, options = { createNewFile: 
     const leavesWithDestAlreadyOpen = [];
     // For all open leaves, if the leave's basename is equal to the link destination, rather activate that leaf instead of opening it in two panes
     workspace.iterateAllLeaves((leaf) => {
-        var _a, _b;
+        var _a;
         if (leaf.view instanceof MarkdownView) {
-            if (((_b = (_a = leaf.view) === null || _a === void 0 ? void 0 : _a.file) === null || _b === void 0 ? void 0 : _b.basename) === destStripped) {
+            const file = (_a = leaf.view) === null || _a === void 0 ? void 0 : _a.file;
+            if (file && file.basename + "." + file.extension === dest) {
                 leavesWithDestAlreadyOpen.push(leaf);
             }
         }
@@ -262,7 +258,7 @@ export function isLinked(resolvedLinks, from, to, directed = true) {
 export function isResolved(app, to, from) {
     var _a;
     const { resolvedLinks } = app.metadataCache;
-    return ((_a = resolvedLinks === null || resolvedLinks === void 0 ? void 0 : resolvedLinks[from]) === null || _a === void 0 ? void 0 : _a[to]) > 0;
+    return ((_a = resolvedLinks === null || resolvedLinks === void 0 ? void 0 : resolvedLinks[addMD(from)]) === null || _a === void 0 ? void 0 : _a[addMD(to)]) > 0;
 }
 /**
  * Open your view on the chosen `side` if it isn't already open
