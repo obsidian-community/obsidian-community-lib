@@ -216,16 +216,12 @@ export async function createNewMDNote(
 }
 
 /**
- * Add '.md' to a `noteName` if it isn't already there.
+ * Add '.md' to `noteName` if it isn't already there.
  * @param  {string} noteName with or without '.md' on the end.
  * @returns {string} noteName with '.md' on the end.
  */
 export const addMD = (noteName: string): string => {
-  let withMD = noteName.slice();
-  if (!withMD.endsWith(".md")) {
-    withMD += ".md";
-  }
-  return withMD;
+  return noteName.endsWith(".md") ? noteName : noteName + ".md";
 };
 
 /**
@@ -327,7 +323,7 @@ export function isLinked(
  */
 export function isResolved(app: App, to: string, from: string): boolean {
   const { resolvedLinks } = app.metadataCache;
-  return resolvedLinks?.[from]?.[to] > 0;
+  return resolvedLinks?.[addMD(from)]?.[addMD(to)] > 0;
 }
 
 /**
