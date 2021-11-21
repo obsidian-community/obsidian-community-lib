@@ -21,6 +21,7 @@ export {
   stripMD,
   resolvedLinksComplete,
   waitForResolvedLinks,
+  splitAtYaml,
 } from "./utils";
 
 export { ResolvedLinks } from "./interfaces";

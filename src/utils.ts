@@ -494,3 +494,19 @@ export async function waitForResolvedLinks(
     );
   }
 }
+
+/**
+ * Check if the content of a note has YAML. If so, return an array of the YAML and the rest of the note. If not, return `['', content]`
+ * @param  {string} content
+ */
+export function splitAtYaml(content: string): [string, string] {
+  const startsWithYaml = content.startsWith("---");
+  if (!startsWithYaml) return ["", content];
+  else {
+    const splits = content.split("---");
+    return [
+      splits.slice(0, 2).join("---") + "---",
+      splits.slice(2).join("---"),
+    ];
+  }
+}
