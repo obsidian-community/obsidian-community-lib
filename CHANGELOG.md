@@ -1,4 +1,19 @@
 ## Obsidian Community Lib Changelog
+### [1.4.1](https://github.com/obsidian-community/obsidian-community-lib/compare/1.4.0...1.4.1) (2021-12-19)
+
+
+### Bug Fixes
+
+* :bug: Better startsWithYaml checking ([4a36ed5](https://github.com/obsidian-community/obsidian-community-lib/commit/4a36ed5b331e0283ec0d8ca9d87941703ce8014f))
+
+## [1.4.0](https://github.com/obsidian-community/obsidian-community-lib/compare/1.3.0...1.4.0) (2021-12-19)
+
+
+### Features
+
+* :sparkles: New function + simplifications ([d16a41d](https://github.com/obsidian-community/obsidian-community-lib/commit/d16a41d86928a2b21b38e5010b467e025e8303d4))
+* :sparkles: splitAtYaml function ([7a9b0c5](https://github.com/obsidian-community/obsidian-community-lib/commit/7a9b0c592f9d05e11005f19c36d8f9f412324bed))
+
 ## [1.3.0](https://github.com/obsidian-community/obsidian-community-lib/compare/1.2.0...1.3.0) (2021-11-17)
 
 
