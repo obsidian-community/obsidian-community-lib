@@ -125,38 +125,25 @@ export async function copy(
  * @param  {Editor} editor
  */
 export function getSelectionFromEditor(editor: Editor): string {
-  if (editor.somethingSelected()) {
-    return editor.getSelection();
-  } else {
-    return editor.getValue();
-  }
+  if (editor.somethingSelected()) return editor.getSelection();
+  else return editor.getValue();
 }
 
 /**
  * Check if something is selected in the current file and return that selection, otherwise return the entire content of the current file.
  * @param  {App} app
  * @param  {boolean} [cached=true] Use `cachedRead` or `read`. `cachedRead` by default.
+ * @returns {string | null} `null` if not focussed on a markdown file
  */
 export async function getSelectionFromCurrFile(
   app: App,
   cached: boolean = true
-): Promise<string> {
+): Promise<string | null> {
   const text = window?.getSelection()?.toString();
-  if (text) {
-    return text;
-  } else {
-    const currFile = app.workspace.getActiveFile();
-    if (currFile instanceof TFile) {
-      if (cached) {
-        return await app.vault.cachedRead(currFile);
-      } else {
-        return await app.vault.read(currFile);
-      }
-    } else {
-      new Notice("You must be focused on a markdown file.");
-    }
-  }
+  if (text) return text;
+  else return await getActiveFileContent(app, cached);
 }
+
 /**
  * Check if `noteName` is the name of a note that exists in the vault.
  * @param  {App} app
@@ -500,8 +487,7 @@ export async function waitForResolvedLinks(
  * @param  {string} content
  */
 export function splitAtYaml(content: string): [string, string] {
-  const startsWithYaml = content.startsWith("---");
-  if (!startsWithYaml) return ["", content];
+  if (!content.startsWith("---")) return ["", content];
   else {
     const splits = content.split("---");
     return [
@@ -509,4 +495,14 @@ export function splitAtYaml(content: string): [string, string] {
       splits.slice(2).join("---"),
     ];
   }
+}
+
+export async function getActiveFileContent(
+  app: App,
+  cached = true
+): Promise<string | null> {
+  const currFile = app.workspace.getActiveFile();
+  if (!(currFile instanceof TFile)) return null;
+  if (cached) return await app.vault.cachedRead(currFile);
+  else return await app.vault.read(currFile);
 }
