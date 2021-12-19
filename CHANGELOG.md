@@ -1,4 +1,11 @@
 ## Obsidian Community Lib Changelog
+### [1.4.1](https://github.com/obsidian-community/obsidian-community-lib/compare/1.4.0...1.4.1) (2021-12-19)
+
+
+### Bug Fixes
+
+* :bug: Better startsWithYaml checking ([4a36ed5](https://github.com/obsidian-community/obsidian-community-lib/commit/4a36ed5b331e0283ec0d8ca9d87941703ce8014f))
+
 ## [1.4.0](https://github.com/obsidian-community/obsidian-community-lib/compare/1.3.0...1.4.0) (2021-12-19)
 
 
