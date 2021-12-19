@@ -487,7 +487,7 @@ export async function waitForResolvedLinks(
  * @param  {string} content
  */
 export function splitAtYaml(content: string): [string, string] {
-  if (!content.startsWith("---")) return ["", content];
+  if (!/^---\n/.test(content)) return ["", content];
   else {
     const splits = content.split("---");
     return [
