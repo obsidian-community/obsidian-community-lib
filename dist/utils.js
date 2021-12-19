@@ -88,38 +88,24 @@ export async function copy(content, success = () => new Notice("Copied to clipbo
  * @param  {Editor} editor
  */
 export function getSelectionFromEditor(editor) {
-    if (editor.somethingSelected()) {
+    if (editor.somethingSelected())
         return editor.getSelection();
-    }
-    else {
+    else
         return editor.getValue();
-    }
 }
 /**
  * Check if something is selected in the current file and return that selection, otherwise return the entire content of the current file.
  * @param  {App} app
  * @param  {boolean} [cached=true] Use `cachedRead` or `read`. `cachedRead` by default.
+ * @returns {string | null} `null` if not focussed on a markdown file
  */
 export async function getSelectionFromCurrFile(app, cached = true) {
     var _a;
     const text = (_a = window === null || window === void 0 ? void 0 : window.getSelection()) === null || _a === void 0 ? void 0 : _a.toString();
-    if (text) {
+    if (text)
         return text;
-    }
-    else {
-        const currFile = app.workspace.getActiveFile();
-        if (currFile instanceof TFile) {
-            if (cached) {
-                return await app.vault.cachedRead(currFile);
-            }
-            else {
-                return await app.vault.read(currFile);
-            }
-        }
-        else {
-            new Notice("You must be focused on a markdown file.");
-        }
-    }
+    else
+        return await getActiveFileContent(app, cached);
 }
 /**
  * Check if `noteName` is the name of a note that exists in the vault.
@@ -388,4 +374,28 @@ export async function waitForResolvedLinks(app, delay = 1000, max = 50) {
     if (i === max) {
         throw Error("Obsidian-Community-Lib: ResolvedLinks did not finish initialising. `max` iterations was reached first.");
     }
+}
+/**
+ * Check if the content of a note has YAML. If so, return an array of the YAML and the rest of the note. If not, return `['', content]`
+ * @param  {string} content
+ */
+export function splitAtYaml(content) {
+    if (!content.startsWith("---"))
+        return ["", content];
+    else {
+        const splits = content.split("---");
+        return [
+            splits.slice(0, 2).join("---") + "---",
+            splits.slice(2).join("---"),
+        ];
+    }
+}
+export async function getActiveFileContent(app, cached = true) {
+    const currFile = app.workspace.getActiveFile();
+    if (!(currFile instanceof TFile))
+        return null;
+    if (cached)
+        return await app.vault.cachedRead(currFile);
+    else
+        return await app.vault.read(currFile);
 }

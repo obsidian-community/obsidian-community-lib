@@ -64,8 +64,9 @@ export declare function getSelectionFromEditor(editor: Editor): string;
  * Check if something is selected in the current file and return that selection, otherwise return the entire content of the current file.
  * @param  {App} app
  * @param  {boolean} [cached=true] Use `cachedRead` or `read`. `cachedRead` by default.
+ * @returns {string | null} `null` if not focussed on a markdown file
  */
-export declare function getSelectionFromCurrFile(app: App, cached?: boolean): Promise<string>;
+export declare function getSelectionFromCurrFile(app: App, cached?: boolean): Promise<string | null>;
 /**
  * Check if `noteName` is the name of a note that exists in the vault.
  * @param  {App} app
@@ -201,3 +202,9 @@ export declare function resolvedLinksComplete(app: App, noFiles: number): boolea
  * @param {number} [max=50] Maximum number of iterations to check before throwing an error and breaking out of the loop.
  */
 export declare function waitForResolvedLinks(app: App, delay?: number, max?: number): Promise<void>;
+/**
+ * Check if the content of a note has YAML. If so, return an array of the YAML and the rest of the note. If not, return `['', content]`
+ * @param  {string} content
+ */
+export declare function splitAtYaml(content: string): [string, string];
+export declare function getActiveFileContent(app: App, cached?: boolean): Promise<string | null>;
