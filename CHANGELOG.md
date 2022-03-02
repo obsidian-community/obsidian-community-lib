@@ -1,4 +1,11 @@
 ## Obsidian Community Lib Changelog
+### [1.4.2](https://github.com/obsidian-community/obsidian-community-lib/compare/1.4.1...1.4.2) (2022-03-02)
+
+
+### Documentation
+
+* :wastebasket: Deprecate `addFeatherIcon` and `addAllFeatherIcons` because Obsidian now ships a full Icon Library ([#28](https://github.com/obsidian-community/obsidian-community-lib/issues/28)) ([0d929b5](https://github.com/obsidian-community/obsidian-community-lib/commit/0d929b5c88fc064c699d927dd7627ec0254f8180))
+
 ### [1.4.1](https://github.com/obsidian-community/obsidian-community-lib/compare/1.4.0...1.4.1) (2021-12-19)
 
 
