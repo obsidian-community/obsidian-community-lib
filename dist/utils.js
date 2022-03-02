@@ -17,6 +17,8 @@ export async function wait(delay) {
  * https://feathericons.com/
  *
  * @param attr SVG Attributes for the Icon. The default should work for most usecases.
+ *
+ * @deprecated As of Obsidian 0.13.27 this is no longer needed, because Obsidian ships with `lucide`, a maintained fork of feather. (https://lucide.dev/)
  */
 export function addAllFeatherIcons(attr = { viewBox: "0 0 24 24", width: "100", height: "100" }) {
     Object.values(feather.icons).forEach((i) => {
@@ -30,6 +32,8 @@ export function addAllFeatherIcons(attr = { viewBox: "0 0 24 24", width: "100", 
  * @param name official Name of the Icon (https://feathericons.com/)
  * @param attr SVG Attributes for the Icon. The default should work for most usecases.
  * @returns {string} Icon name
+ *
+ * @deprecated As of Obsidian 0.13.27 this is no longer needed, because Obsidian ships with `lucide`, a maintained fork of feather. (https://lucide.dev/)
  */
 export function addFeatherIcon(name, attr = { viewBox: "0 0 24 24", width: "100", height: "100" }) {
     if (feather.icons[name]) {

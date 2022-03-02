@@ -11,6 +11,8 @@ export declare function wait(delay: number): Promise<void>;
  * https://feathericons.com/
  *
  * @param attr SVG Attributes for the Icon. The default should work for most usecases.
+ *
+ * @deprecated As of Obsidian 0.13.27 this is no longer needed, because Obsidian ships with `lucide`, a maintained fork of feather. (https://lucide.dev/)
  */
 export declare function addAllFeatherIcons(attr?: {
     viewBox: string;
@@ -23,6 +25,8 @@ export declare function addAllFeatherIcons(attr?: {
  * @param name official Name of the Icon (https://feathericons.com/)
  * @param attr SVG Attributes for the Icon. The default should work for most usecases.
  * @returns {string} Icon name
+ *
+ * @deprecated As of Obsidian 0.13.27 this is no longer needed, because Obsidian ships with `lucide`, a maintained fork of feather. (https://lucide.dev/)
  */
 export declare function addFeatherIcon(name: string, attr?: {
     viewBox: string;
