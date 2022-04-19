@@ -5,7 +5,6 @@
 import * as feather from "feather-icons";
 import {
   addIcon,
-  App,
   Constructor,
   Editor,
   ItemView,
@@ -17,7 +16,6 @@ import {
   Plugin,
   request,
   TFile,
-  Vault,
   WorkspaceLeaf,
 } from "obsidian";
 import { ResolvedLinks } from "./interfaces";
@@ -76,6 +74,7 @@ export function addFeatherIcon(
  *
  * @param base64 base64 string to be converted.
  * @returns ArrayBuffer
+ * @deprecated Obsidian offers it's own method as of 0.14.5
  */
 export function base64ToArrayBuffer(base64: string): ArrayBuffer {
   const binary_string = window.atob(base64);
@@ -90,20 +89,18 @@ export function base64ToArrayBuffer(base64: string): ArrayBuffer {
 /**
  * This is a helper method for an undocumented API of Obsidian.
  *
- * @param vault You can get this via `this.app.vault`
  * @param fileName The Filename for your Attachment
  * @param format The Fileformat of your Attachment
  * @param sourceFile The Sourcefile from where the Attachment gets added, this is needed because the Attachment Folder might be different based on where it gets inserted.
  * @returns The Attachment Path
  */
 export function getAvailablePathForAttachments(
-  vault: Vault,
   fileName: string,
   format: string,
   sourceFile: TFile
 ): string {
   //@ts-expect-error
-  return vault.getAvailablePathForAttachments(fileName, format, sourceFile);
+  return app.vault.getAvailablePathForAttachments(fileName, format, sourceFile);
 }
 
 /**
@@ -135,28 +132,24 @@ export function getSelectionFromEditor(editor: Editor): string {
 
 /**
  * Check if something is selected in the current file and return that selection, otherwise return the entire content of the current file.
- * @param  {App} app
  * @param  {boolean} [cached=true] Use `cachedRead` or `read`. `cachedRead` by default.
  * @returns {string | null} `null` if not focussed on a markdown file
  */
 export async function getSelectionFromCurrFile(
-  app: App,
   cached: boolean = true
 ): Promise<string | null> {
   const text = window?.getSelection()?.toString();
   if (text) return text;
-  else return await getActiveFileContent(app, cached);
+  else return await getActiveFileContent(cached);
 }
 
 /**
  * Check if `noteName` is the name of a note that exists in the vault.
- * @param  {App} app
  * @param  {string} noteName Basename of the note to search for.
  * @param  {string} [sourcePath=""] Optional file path to start searching from. Default is the current file.
  * @returns boolean
  */
 export const isInVault = (
-  app: App,
   noteName: string,
   sourcePath: string = ""
 ): boolean => !!app.metadataCache.getFirstLinkpathDest(noteName, sourcePath);
@@ -178,7 +171,7 @@ export function hoverPreview<YourView extends ItemView>(
 ): void {
   const targetEl = event.target as HTMLElement;
 
-  view.app.workspace.trigger("hover-link", {
+  app.workspace.trigger("hover-link", {
     event,
     source: view.getViewType(),
     hoverParent: view,
@@ -189,13 +182,11 @@ export function hoverPreview<YourView extends ItemView>(
 
 /**
  * Create a new markdown note named `newName` in the user's preffered new-note-folder.
- * @param  {App} app
  * @param  {string} newName Name of new note (with or without '.md')
  * @param  {string} [currFilePath=""] File path of the current note. Use an empty string if there is no active file.
  * @returns {Promise<TFile>} new TFile
  */
 export async function createNewMDNote(
-  app: App,
   newName: string,
   currFilePath: string = ""
 ): Promise<TFile> {
@@ -230,14 +221,12 @@ export const stripMD = (noteName: string): string => {
 
 /**
  * When clicking a link, check if that note is already open in another leaf, and switch to that leaf, if so. Otherwise, open the note in a new pane.
- * @param  {App} app
  * @param  {string} dest Name of note to open. If you want to open a non-md note, be sure to add the file extension.
  * @param  {MouseEvent} event
  * @param  {{createNewFile:boolean}} [options={createNewFile:true}] Whether or not to create `dest` file if it doesn't exist. If `false`, simply return from the function.
  * @returns Promise
  */
 export async function openOrSwitch(
-  app: App,
   dest: string,
   event: MouseEvent,
   options: {
@@ -249,7 +238,7 @@ export async function openOrSwitch(
 
   // If dest doesn't exist, make it
   if (!destFile && options.createNewFile) {
-    destFile = await createNewMDNote(app, dest);
+    destFile = await createNewMDNote(dest);
   } else if (!destFile && !options.createNewFile) return;
 
   // Check if it's already open
@@ -275,6 +264,7 @@ export async function openOrSwitch(
         ? workspace.splitActiveLeaf()
         : workspace.getUnpinnedLeaf();
 
+    //@ts-expect-error
     await leaf.openFile(destFile, { active: true, mode });
   }
 }
@@ -307,26 +297,23 @@ export function isLinked(
 
 /**
  * Check if the link `from` → `to` is resolved or not.
- * @param  {App} app
  * @param  {string} to
  * @param  {string} from
  * @returns boolean
  */
-export function isResolved(app: App, to: string, from: string): boolean {
+export function isResolved(to: string, from: string): boolean {
   const { resolvedLinks } = app.metadataCache;
   return resolvedLinks?.[addMD(from)]?.[addMD(to)] > 0;
 }
 
 /**
  * Open your view on the chosen `side` if it isn't already open
- * @param  {App} app
  * @param  {string} viewType
  * @param  {Constructor<YourView>} viewClass The class constructor of your view
  * @param  {"left"|"right"} [side="right"]
  * @returns {Promise<YourView>} The opened view
  */
 export async function openView<YourView extends ItemView>(
-  app: App,
   viewType: string,
   viewClass: Constructor<YourView>,
   side: "left" | "right" = "right"
@@ -356,14 +343,12 @@ export async function openView<YourView extends ItemView>(
  * Check which side of the workspace your `viewType` is on, and save it into `plugin.settings[settingName]`.
  *
  * **Tip**: Run this function on `plugin.unload` to save the last side your view was on when closing, then {@link openView} on the same side it was last.
- * @param  {App} app
  * @param  {YourPlugin} plugin
  * @param  {string} viewType
  * @param  {string} settingName
  * @returns {"left" | "right"} `side`
  */
 export async function saveViewSide<YourPlugin extends Plugin>(
-  app: App,
   plugin: YourPlugin,
   viewType: string,
   settingName: string
@@ -388,7 +373,6 @@ export async function saveViewSide<YourPlugin extends Plugin>(
  * A Modal used in {@link addRenderedMarkdownButton} to display rendered markdown from a raw string, or fetched from a provided url.
  *
  * ![](https://i.imgur.com/NMwM50E.png)
- * @param  {App} app
  * @param  {YourPlugin} plugin
  * @param  {string} source Raw markdown content or url to find raw markdown.
  * @param  {boolean} fetch True → fetch markdown from `source` as url. False → `source` is already a markdown string.
@@ -398,7 +382,7 @@ export class RenderedMarkdownModal<YourPlugin extends Plugin> extends Modal {
   source: string;
   fetch: boolean;
 
-  constructor(app: App, plugin: YourPlugin, source: string, fetch: boolean) {
+  constructor(plugin: YourPlugin, source: string, fetch: boolean) {
     super(app);
     this.plugin = plugin;
     this.source = source;
@@ -428,7 +412,6 @@ export class RenderedMarkdownModal<YourPlugin extends Plugin> extends Modal {
  * Use `fetch` to indicate whether the markdown string needs to be fetched, or if it has been provided as a string already.
  *
  * ![](https://i.imgur.com/Hi4gyyv.png)
- * @param  {App} app
  * @param  {YourPlugin} plugin
  * @param  {HTMLElement} containerEl HTMLElement to add the button to
  * @param  {string} source Raw markdown content or url to find raw markdown.
@@ -436,7 +419,6 @@ export class RenderedMarkdownModal<YourPlugin extends Plugin> extends Modal {
  * @param  {string} displayText Text to display in the button.
  */
 export function addRenderedMarkdownButton<YourPlugin extends Plugin>(
-  app: App,
   plugin: YourPlugin,
   containerEl: HTMLElement,
   source: string,
@@ -445,7 +427,7 @@ export function addRenderedMarkdownButton<YourPlugin extends Plugin>(
 ) {
   containerEl.createEl("button", { text: displayText }, (but) =>
     but.onClickEvent(() => {
-      new RenderedMarkdownModal(app, plugin, source, fetch).open();
+      new RenderedMarkdownModal(plugin, source, fetch).open();
     })
   );
 }
@@ -453,29 +435,26 @@ export function addRenderedMarkdownButton<YourPlugin extends Plugin>(
  * Check if `app.metadataCache.ResolvedLinks` have fully initalised.
  *
  * Used with {@link waitForResolvedLinks}.
- * @param {App} app
  * @param  {number} noFiles Number of files in your vault.
  * @returns {boolean}
  */
-export function resolvedLinksComplete(app: App, noFiles: number): boolean {
+export function resolvedLinksComplete(noFiles: number): boolean {
   const { resolvedLinks } = app.metadataCache;
   return Object.keys(resolvedLinks).length === noFiles;
 }
 
 /**
  * Wait for `app.metadataCache.ResolvedLinks` to have fully initialised.
- * @param {App} app
  * @param  {number} [delay=1000] Number of milliseconds to wait between each check.
  * @param {number} [max=50] Maximum number of iterations to check before throwing an error and breaking out of the loop.
  */
 export async function waitForResolvedLinks(
-  app: App,
   delay: number = 1000,
   max: number = 50
 ) {
   const noFiles = app.vault.getMarkdownFiles().length;
   let i = 0;
-  while (!resolvedLinksComplete(app, noFiles) && i < max) {
+  while (!resolvedLinksComplete(noFiles) && i < max) {
     await wait(delay);
     i++;
   }
@@ -501,8 +480,12 @@ export function splitAtYaml(content: string): [string, string] {
   }
 }
 
+/**
+ * 
+ * @param {boolean} cached Return cached file content **or** return what's on disk. 
+ * @returns 
+ */
 export async function getActiveFileContent(
-  app: App,
   cached = true
 ): Promise<string | null> {
   const currFile = app.workspace.getActiveFile();
