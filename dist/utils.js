@@ -51,6 +51,7 @@ export function addFeatherIcon(name, attr = { viewBox: "0 0 24 24", width: "100"
  *
  * @param base64 base64 string to be converted.
  * @returns ArrayBuffer
+ * @deprecated Obsidian offers it's own method as of 0.14.5
  */
 export function base64ToArrayBuffer(base64) {
     const binary_string = window.atob(base64);
@@ -64,15 +65,14 @@ export function base64ToArrayBuffer(base64) {
 /**
  * This is a helper method for an undocumented API of Obsidian.
  *
- * @param vault You can get this via `this.app.vault`
  * @param fileName The Filename for your Attachment
  * @param format The Fileformat of your Attachment
  * @param sourceFile The Sourcefile from where the Attachment gets added, this is needed because the Attachment Folder might be different based on where it gets inserted.
  * @returns The Attachment Path
  */
-export function getAvailablePathForAttachments(vault, fileName, format, sourceFile) {
+export function getAvailablePathForAttachments(fileName, format, sourceFile) {
     //@ts-expect-error
-    return vault.getAvailablePathForAttachments(fileName, format, sourceFile);
+    return app.vault.getAvailablePathForAttachments(fileName, format, sourceFile);
 }
 /**
  * Copy `content` to the users clipboard.
@@ -99,26 +99,24 @@ export function getSelectionFromEditor(editor) {
 }
 /**
  * Check if something is selected in the current file and return that selection, otherwise return the entire content of the current file.
- * @param  {App} app
  * @param  {boolean} [cached=true] Use `cachedRead` or `read`. `cachedRead` by default.
  * @returns {string | null} `null` if not focussed on a markdown file
  */
-export async function getSelectionFromCurrFile(app, cached = true) {
+export async function getSelectionFromCurrFile(cached = true) {
     var _a;
     const text = (_a = window === null || window === void 0 ? void 0 : window.getSelection()) === null || _a === void 0 ? void 0 : _a.toString();
     if (text)
         return text;
     else
-        return await getActiveFileContent(app, cached);
+        return await getActiveFileContent(cached);
 }
 /**
  * Check if `noteName` is the name of a note that exists in the vault.
- * @param  {App} app
  * @param  {string} noteName Basename of the note to search for.
  * @param  {string} [sourcePath=""] Optional file path to start searching from. Default is the current file.
  * @returns boolean
  */
-export const isInVault = (app, noteName, sourcePath = "") => !!app.metadataCache.getFirstLinkpathDest(noteName, sourcePath);
+export const isInVault = (noteName, sourcePath = "") => !!app.metadataCache.getFirstLinkpathDest(noteName, sourcePath);
 /**
  * When hovering a link going to `to`, show the Obsidian hover-preview of that note.
  *
@@ -131,7 +129,7 @@ export const isInVault = (app, noteName, sourcePath = "") => !!app.metadataCache
  */
 export function hoverPreview(event, view, to) {
     const targetEl = event.target;
-    view.app.workspace.trigger("hover-link", {
+    app.workspace.trigger("hover-link", {
         event,
         source: view.getViewType(),
         hoverParent: view,
@@ -141,12 +139,11 @@ export function hoverPreview(event, view, to) {
 }
 /**
  * Create a new markdown note named `newName` in the user's preffered new-note-folder.
- * @param  {App} app
  * @param  {string} newName Name of new note (with or without '.md')
  * @param  {string} [currFilePath=""] File path of the current note. Use an empty string if there is no active file.
  * @returns {Promise<TFile>} new TFile
  */
-export async function createNewMDNote(app, newName, currFilePath = "") {
+export async function createNewMDNote(newName, currFilePath = "") {
     const newFileFolder = app.fileManager.getNewFileParent(currFilePath).path;
     const newFilePath = normalizePath(`${newFileFolder}${newFileFolder === "/" ? "" : "/"}${addMD(newName)}`);
     return await app.vault.create(newFilePath, "");
@@ -175,18 +172,17 @@ export const stripMD = (noteName) => {
 };
 /**
  * When clicking a link, check if that note is already open in another leaf, and switch to that leaf, if so. Otherwise, open the note in a new pane.
- * @param  {App} app
  * @param  {string} dest Name of note to open. If you want to open a non-md note, be sure to add the file extension.
  * @param  {MouseEvent} event
  * @param  {{createNewFile:boolean}} [options={createNewFile:true}] Whether or not to create `dest` file if it doesn't exist. If `false`, simply return from the function.
  * @returns Promise
  */
-export async function openOrSwitch(app, dest, event, options = { createNewFile: true }) {
+export async function openOrSwitch(dest, event, options = { createNewFile: true }) {
     const { workspace } = app;
     let destFile = app.metadataCache.getFirstLinkpathDest(dest, "");
     // If dest doesn't exist, make it
     if (!destFile && options.createNewFile) {
-        destFile = await createNewMDNote(app, dest);
+        destFile = await createNewMDNote(dest);
     }
     else if (!destFile && !options.createNewFile)
         return;
@@ -212,6 +208,7 @@ export async function openOrSwitch(app, dest, event, options = { createNewFile: 
         const leaf = event.ctrlKey || event.getModifierState("Meta")
             ? workspace.splitActiveLeaf()
             : workspace.getUnpinnedLeaf();
+        //@ts-expect-error
         await leaf.openFile(destFile, { active: true, mode });
     }
 }
@@ -240,25 +237,23 @@ export function isLinked(resolvedLinks, from, to, directed = true) {
 }
 /**
  * Check if the link `from` → `to` is resolved or not.
- * @param  {App} app
  * @param  {string} to
  * @param  {string} from
  * @returns boolean
  */
-export function isResolved(app, to, from) {
+export function isResolved(to, from) {
     var _a;
     const { resolvedLinks } = app.metadataCache;
     return ((_a = resolvedLinks === null || resolvedLinks === void 0 ? void 0 : resolvedLinks[addMD(from)]) === null || _a === void 0 ? void 0 : _a[addMD(to)]) > 0;
 }
 /**
  * Open your view on the chosen `side` if it isn't already open
- * @param  {App} app
  * @param  {string} viewType
  * @param  {Constructor<YourView>} viewClass The class constructor of your view
  * @param  {"left"|"right"} [side="right"]
  * @returns {Promise<YourView>} The opened view
  */
-export async function openView(app, viewType, viewClass, side = "right") {
+export async function openView(viewType, viewClass, side = "right") {
     let leaf = null;
     for (leaf of app.workspace.getLeavesOfType(viewType)) {
         if (leaf.view instanceof viewClass) {
@@ -281,13 +276,12 @@ export async function openView(app, viewType, viewClass, side = "right") {
  * Check which side of the workspace your `viewType` is on, and save it into `plugin.settings[settingName]`.
  *
  * **Tip**: Run this function on `plugin.unload` to save the last side your view was on when closing, then {@link openView} on the same side it was last.
- * @param  {App} app
  * @param  {YourPlugin} plugin
  * @param  {string} viewType
  * @param  {string} settingName
  * @returns {"left" | "right"} `side`
  */
-export async function saveViewSide(app, plugin, viewType, settingName) {
+export async function saveViewSide(plugin, viewType, settingName) {
     const leaf = app.workspace.getLeavesOfType(viewType)[0];
     if (!leaf) {
         console.info(`Obsidian-Community-Lib: No instance of '${viewType}' open, cannot save side`);
@@ -305,13 +299,12 @@ export async function saveViewSide(app, plugin, viewType, settingName) {
  * A Modal used in {@link addRenderedMarkdownButton} to display rendered markdown from a raw string, or fetched from a provided url.
  *
  * ![](https://i.imgur.com/NMwM50E.png)
- * @param  {App} app
  * @param  {YourPlugin} plugin
  * @param  {string} source Raw markdown content or url to find raw markdown.
  * @param  {boolean} fetch True → fetch markdown from `source` as url. False → `source` is already a markdown string.
  */
 export class RenderedMarkdownModal extends Modal {
-    constructor(app, plugin, source, fetch) {
+    constructor(plugin, source, fetch) {
         super(app);
         this.plugin = plugin;
         this.source = source;
@@ -338,40 +331,37 @@ export class RenderedMarkdownModal extends Modal {
  * Use `fetch` to indicate whether the markdown string needs to be fetched, or if it has been provided as a string already.
  *
  * ![](https://i.imgur.com/Hi4gyyv.png)
- * @param  {App} app
  * @param  {YourPlugin} plugin
  * @param  {HTMLElement} containerEl HTMLElement to add the button to
  * @param  {string} source Raw markdown content or url to find raw markdown.
  * @param  {boolean} fetch True → fetch markdown from `source` as url. False → `source` is already a markdown string.
  * @param  {string} displayText Text to display in the button.
  */
-export function addRenderedMarkdownButton(app, plugin, containerEl, source, fetch, displayText) {
+export function addRenderedMarkdownButton(plugin, containerEl, source, fetch, displayText) {
     containerEl.createEl("button", { text: displayText }, (but) => but.onClickEvent(() => {
-        new RenderedMarkdownModal(app, plugin, source, fetch).open();
+        new RenderedMarkdownModal(plugin, source, fetch).open();
     }));
 }
 /**
  * Check if `app.metadataCache.ResolvedLinks` have fully initalised.
  *
  * Used with {@link waitForResolvedLinks}.
- * @param {App} app
  * @param  {number} noFiles Number of files in your vault.
  * @returns {boolean}
  */
-export function resolvedLinksComplete(app, noFiles) {
+export function resolvedLinksComplete(noFiles) {
     const { resolvedLinks } = app.metadataCache;
     return Object.keys(resolvedLinks).length === noFiles;
 }
 /**
  * Wait for `app.metadataCache.ResolvedLinks` to have fully initialised.
- * @param {App} app
  * @param  {number} [delay=1000] Number of milliseconds to wait between each check.
  * @param {number} [max=50] Maximum number of iterations to check before throwing an error and breaking out of the loop.
  */
-export async function waitForResolvedLinks(app, delay = 1000, max = 50) {
+export async function waitForResolvedLinks(delay = 1000, max = 50) {
     const noFiles = app.vault.getMarkdownFiles().length;
     let i = 0;
-    while (!resolvedLinksComplete(app, noFiles) && i < max) {
+    while (!resolvedLinksComplete(noFiles) && i < max) {
         await wait(delay);
         i++;
     }
@@ -394,7 +384,12 @@ export function splitAtYaml(content) {
         ];
     }
 }
-export async function getActiveFileContent(app, cached = true) {
+/**
+ *
+ * @param {boolean} cached Return cached file content **or** return what's on disk.
+ * @returns
+ */
+export async function getActiveFileContent(cached = true) {
     const currFile = app.workspace.getActiveFile();
     if (!(currFile instanceof TFile))
         return null;
