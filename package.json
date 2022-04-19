@@ -53,6 +53,6 @@
     },
     "dependencies": {
         "feather-icons": "^4.28.0",
-        "obsidian": "^0.12.17"
+        "obsidian": "^0.14.6"
     }
 }
