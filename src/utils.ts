@@ -282,12 +282,9 @@ export function isLinked(
   to: string,
   directed: boolean = true
 ) {
-  if (!from.endsWith(".md")) {
-    from += ".md";
-  }
-  if (!to.endsWith(".md")) {
-    to += ".md";
-  }
+  from = addMD(from);
+  to = addMD(to);
+  
   const fromTo = resolvedLinks[from]?.hasOwnProperty(to);
   if (!fromTo && !directed) {
     const toFrom = resolvedLinks[to]?.hasOwnProperty(from);
