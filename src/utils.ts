@@ -203,7 +203,7 @@ export async function createNewMDNote(
  * @returns {string} noteName with '.md' on the end.
  */
 export const addMD = (noteName: string): string => {
-  return noteName.endsWith(".md") ? noteName : noteName + ".md";
+  return noteName.match(/\.MD$|\.md$/m) ? noteName : noteName + ".md";
 };
 
 /**
@@ -214,8 +214,8 @@ export const addMD = (noteName: string): string => {
  * @returns {string} noteName without '.md'
  */
 export const stripMD = (noteName: string): string => {
-  if (noteName.endsWith(".md")) {
-    return noteName.split(".md").slice(0, -1).join(".md");
+  if (noteName.match(/\.MD$|\.md$/m)) {
+    return noteName.split(/\.MD$|\.md$/m).slice(0, -1).join(".md");
   } else return noteName;
 };
 
@@ -284,7 +284,7 @@ export function isLinked(
 ) {
   from = addMD(from);
   to = addMD(to);
-  
+
   const fromTo = resolvedLinks[from]?.hasOwnProperty(to);
   if (!fromTo && !directed) {
     const toFrom = resolvedLinks[to]?.hasOwnProperty(from);

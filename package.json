@@ -11,7 +11,7 @@
         "test": "jest",
         "compile": "tsc && git commit -am \"chore: :package: Compile\"",
         "docs": "npx typedoc ./src/utils.ts && git commit -am \"chore: :memo: Update docs site\"",
-        "all": "npm run compile && npm run docs && npm run release",
+        "all": "npm run test && npm run compile && npm run docs && npm run release",
         "release": "standard-version"
     },
     "standard-version": {
