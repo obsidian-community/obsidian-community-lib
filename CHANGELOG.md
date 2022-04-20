@@ -1,4 +1,16 @@
 ## Obsidian Community Lib Changelog
+## [1.5.0](https://github.com/obsidian-community/obsidian-community-lib/compare/1.4.1...1.5.0) (2022-04-19)
+
+
+### Features
+
+* :alien: Remove dependency to app as it is now globally accessible ([8dcd393](https://github.com/obsidian-community/obsidian-community-lib/commit/8dcd393b83034d7c576344ef38dea0df0a30e1f3))
+
+
+### Documentation
+
+* :wastebasket: Deprecate `addFeatherIcon` and `addAllFeatherIcons` because Obsidian now ships a full Icon Library ([#28](https://github.com/obsidian-community/obsidian-community-lib/issues/28)) ([0d929b5](https://github.com/obsidian-community/obsidian-community-lib/commit/0d929b5c88fc064c699d927dd7627ec0254f8180))
+
 ### [1.4.2](https://github.com/obsidian-community/obsidian-community-lib/compare/1.4.1...1.4.2) (2022-03-02)
 
 
