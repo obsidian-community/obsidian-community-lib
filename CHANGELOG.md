@@ -1,4 +1,6 @@
 ## Obsidian Community Lib Changelog
+### [2.0.1](https://github.com/obsidian-community/obsidian-community-lib/compare/2.0.0...2.0.1) (2022-04-20)
+
 ## [2.0.0](https://github.com/obsidian-community/obsidian-community-lib/compare/1.4.2...2.0.0) (2022-04-20)
 
 
