@@ -154,7 +154,7 @@ export async function createNewMDNote(newName, currFilePath = "") {
  * @returns {string} noteName with '.md' on the end.
  */
 export const addMD = (noteName) => {
-    return noteName.endsWith(".md") ? noteName : noteName + ".md";
+    return noteName.match(/\.MD$|\.md$/m) ? noteName : noteName + ".md";
 };
 /**
  * Strip '.md' off the end of a note name to get its basename.
@@ -164,8 +164,8 @@ export const addMD = (noteName) => {
  * @returns {string} noteName without '.md'
  */
 export const stripMD = (noteName) => {
-    if (noteName.endsWith(".md")) {
-        return noteName.split(".md").slice(0, -1).join(".md");
+    if (noteName.match(/\.MD$|\.md$/m)) {
+        return noteName.split(/\.MD$|\.md$/m).slice(0, -1).join(".md");
     }
     else
         return noteName;
@@ -221,12 +221,8 @@ export async function openOrSwitch(dest, event, options = { createNewFile: true 
  */
 export function isLinked(resolvedLinks, from, to, directed = true) {
     var _a, _b;
-    if (!from.endsWith(".md")) {
-        from += ".md";
-    }
-    if (!to.endsWith(".md")) {
-        to += ".md";
-    }
+    from = addMD(from);
+    to = addMD(to);
     const fromTo = (_a = resolvedLinks[from]) === null || _a === void 0 ? void 0 : _a.hasOwnProperty(to);
     if (!fromTo && !directed) {
         const toFrom = (_b = resolvedLinks[to]) === null || _b === void 0 ? void 0 : _b.hasOwnProperty(from);
