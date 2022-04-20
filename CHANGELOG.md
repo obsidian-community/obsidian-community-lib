@@ -1,4 +1,11 @@
 ## Obsidian Community Lib Changelog
+## [2.0.0](https://github.com/obsidian-community/obsidian-community-lib/compare/1.4.2...2.0.0) (2022-04-20)
+
+
+### Features
+
+* :alien: Remove dependency to app as it is now globally accessible ([8dcd393](https://github.com/obsidian-community/obsidian-community-lib/commit/8dcd393b83034d7c576344ef38dea0df0a30e1f3))
+
 ## [1.5.0](https://github.com/obsidian-community/obsidian-community-lib/compare/1.4.1...1.5.0) (2022-04-19)
 
 
