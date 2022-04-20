@@ -1,6 +1,6 @@
 {
     "name": "obsidian-community-lib",
-    "version": "1.4.2",
+    "version": "1.5.0",
     "description": "Commonly used functions in Obsidian plugins",
     "main": "dist/index.js",
     "types": "dist/index.d.ts",
@@ -8,10 +8,10 @@
         "/dist"
     ],
     "scripts": {
-        "test": "echo \"Error: no test specified\" && exit 1",
+        "test": "jest",
         "compile": "tsc && git commit -am \"chore: :package: Compile\"",
         "docs": "npx typedoc ./src/utils.ts && git commit -am \"chore: :memo: Update docs site\"",
-        "all": "npm run compile && npm run docs && npm run release",
+        "all": "npm run test && npm run compile && npm run docs && npm run release",
         "release": "standard-version"
     },
     "standard-version": {
@@ -47,12 +47,16 @@
     "homepage": "https://github.com/obsidian-community/obsidian-community-lib#readme",
     "devDependencies": {
         "@types/feather-icons": "^4.7.0",
+        "@types/jest": "^27.4.1",
+        "jest": "^27.5.1",
         "standard-version": "^9.3.2",
+        "ts-jest": "^27.1.4",
+        "ts-node": "^10.7.0",
         "typedoc": "^0.22.6",
-        "typescript": "^4.4.4"
+        "typescript": "^4.6.3"
     },
     "dependencies": {
         "feather-icons": "^4.28.0",
-        "obsidian": "^0.12.17"
+        "obsidian": "^0.14.6"
     }
 }
