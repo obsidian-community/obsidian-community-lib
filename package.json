@@ -57,6 +57,6 @@
     },
     "dependencies": {
         "feather-icons": "^4.28.0",
-        "obsidian": "^0.14.6"
+        "obsidian": "^0.15.4"
     }
 }
