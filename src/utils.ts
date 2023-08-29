@@ -261,8 +261,8 @@ export async function openOrSwitch(
     const mode = app.vault.getConfig("defaultViewMode") as string;
     const leaf =
       event.ctrlKey || event.getModifierState("Meta")
-        ? workspace.splitActiveLeaf()
-        : workspace.getUnpinnedLeaf();
+        ? workspace.getLeaf(true)
+        : workspace.getLeaf(false);
 
     //@ts-expect-error
     await leaf.openFile(destFile, { active: true, mode });
@@ -395,7 +395,7 @@ export class RenderedMarkdownModal<YourPlugin extends Plugin> extends Modal {
       contentEl.empty();
     }
     const logDiv = contentEl.createDiv({ cls: "OCL-RenderedMarkdownModal" });
-    MarkdownRenderer.renderMarkdown(content, logDiv, "", plugin);
+    MarkdownRenderer.render(app, content, logDiv, "", plugin);
   }
 
   onClose() {
